@@ -62,6 +62,33 @@ export function RealtimeSession() {
   const avatarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const micPreviewStreamRef = useRef<MediaStream | null>(null);
   const autoPreviewLockRef = useRef(false);
+  const syncCameraElement = useCallback((stream: MediaStream | null) => {
+    const element = selfVideoRef.current;
+    if (!element) return;
+
+    if (!stream) {
+      if (element.srcObject) {
+        try {
+          element.pause?.();
+        } catch (error) {
+          console.warn("Camera preview pause error", error);
+        }
+        element.srcObject = null;
+      }
+      return;
+    }
+
+    if (element.srcObject !== stream) {
+      element.srcObject = stream;
+    }
+
+    const playPromise = element.play?.();
+    if (playPromise instanceof Promise) {
+      playPromise.catch((error) => {
+        console.warn("Camera preview autoplay bloqué", error);
+      });
+    }
+  }, []);
 
   const feedback = (rawFeedback ?? null) as CoachFeedback;
 
@@ -100,15 +127,11 @@ export function RealtimeSession() {
       stream.getTracks().forEach((track) => track.stop());
     }
     cameraStreamRef.current = null;
-
-    const element = selfVideoRef.current;
-    if (element) {
-      element.srcObject = null;
-    }
+    syncCameraElement(null);
 
     setCameraStatus("idle");
     setCameraError(null);
-  }, []);
+  }, [syncCameraElement]);
 
   const stopMicPreview = useCallback(() => {
     const stream = micPreviewStreamRef.current;
@@ -131,14 +154,20 @@ export function RealtimeSession() {
       return false;
     }
 
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      const description =
+        "La caméra nécessite un contexte sécurisé (HTTPS ou http://localhost).";
+      setCameraStatus("error");
+      setCameraError(description);
+      toast.error("Impossible d'activer la caméra.", { description });
+      return false;
+    }
+
     try {
       setCameraStatus("requesting");
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       cameraStreamRef.current = stream;
-      const element = selfVideoRef.current;
-      if (element) {
-        element.srcObject = stream;
-      }
+      syncCameraElement(stream);
       setCameraStatus("ready");
       setCameraError(null);
       return true;
@@ -150,7 +179,7 @@ export function RealtimeSession() {
       toast.error("Impossible d'activer la caméra.", { description });
       return false;
     }
-  }, [cameraStatus]);
+  }, [cameraStatus, syncCameraElement]);
 
   const ensureMicrophoneAccess = useCallback(async (): Promise<boolean> => {
     if (micPreviewStreamRef.current && micStatus === "ready") {
@@ -266,18 +295,14 @@ export function RealtimeSession() {
   }, [stopMicPreview]);
 
   useEffect(() => {
-    if (!selfVideoRef.current) return;
-    const element = selfVideoRef.current;
     const stream = cameraStreamRef.current;
-
     if (stream && cameraStatus === "ready") {
-      if (element.srcObject !== stream) {
-        element.srcObject = stream;
-      }
-    } else if (!stream && element.srcObject) {
-      element.srcObject = null;
+      syncCameraElement(stream);
     }
-  }, [cameraStatus]);
+    if (!stream) {
+      syncCameraElement(null);
+    }
+  }, [cameraStatus, syncCameraElement]);
 
   useEffect(() => {
     return () => {

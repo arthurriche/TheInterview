@@ -1,7 +1,17 @@
 import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
 import { WorkerOptions, cli, defineAgent, voice } from "@livekit/agents";
 import * as bey from "@livekit/agents-plugin-bey";
 import * as openai from "@livekit/agents-plugin-openai";
+
+if (typeof process.loadEnvFile === "function") {
+  if (existsSync(".env.local")) {
+    process.loadEnvFile(".env.local");
+  }
+  if (existsSync(".env")) {
+    process.loadEnvFile(".env");
+  }
+}
 
 const beyAvatarId = process.env.BEY_AVATAR_ID;
 const agentName = process.env.LIVEKIT_AGENT_NAME ?? "finance-coach-avatar";
