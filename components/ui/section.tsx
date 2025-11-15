@@ -13,10 +13,10 @@ export function Section({ className, title, subtitle, eyebrow, children, ...rest
       {(eyebrow || title || subtitle) && (
         <header className="space-y-2">
           {eyebrow ? (
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-300/70">{eyebrow}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#4F46E5]">{eyebrow}</p>
           ) : null}
-          {title ? <h2 className="text-2xl font-bold text-slate-50">{title}</h2> : null}
-          {subtitle ? <p className="text-sm text-slate-300/80">{subtitle}</p> : null}
+          {title ? <h2 className="text-2xl font-bold text-[#2A2D3A]">{title}</h2> : null}
+          {subtitle ? <p className="text-sm text-[#6B7280]">{subtitle}</p> : null}
         </header>
       )}
       {children}

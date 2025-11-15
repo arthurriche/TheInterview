@@ -19,7 +19,7 @@ const signInSchema = z.object({
 type SignInValues = z.infer<typeof signInSchema>;
 
 const inputClass =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 export function SignInForm() {
   const router = useRouter();
@@ -106,7 +106,7 @@ export function SignInForm() {
     <div className="grid gap-8">
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signin-email">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signin-email">
             Email ou nom d'utilisateur
           </label>
           <input
@@ -118,12 +118,12 @@ export function SignInForm() {
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-xs text-rose-300">{errors.email.message}</p>
+            <p className="text-xs text-rose-400">{errors.email.message}</p>
           ) : null}
         </div>
 
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signin-password">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signin-password">
             Mot de passe
           </label>
           <input
@@ -135,7 +135,7 @@ export function SignInForm() {
             {...register("password")}
           />
           {errors.password ? (
-            <p className="text-xs text-rose-300">{errors.password.message}</p>
+            <p className="text-xs text-rose-400">{errors.password.message}</p>
           ) : null}
         </div>
 
@@ -146,10 +146,10 @@ export function SignInForm() {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
+          <div className="w-full border-t border-white/70" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-slate-950 px-2 text-slate-400">Ou continuer avec</span>
+          <span className="bg-white px-2 text-[#9CA3AF]">Ou continuer avec</span>
         </div>
       </div>
 
@@ -188,9 +188,9 @@ export function SignInForm() {
         </Button>
       </div>
 
-      <p className="text-center text-sm text-slate-300/80">
+      <p className="text-center text-sm text-[#4A4E5E]">
         Pas encore de compte ?{" "}
-        <Link href="/auth/sign-up" className="font-semibold text-emerald-200 hover:text-emerald-100 underline">
+        <Link href="/auth/sign-up" className="font-semibold text-[#4F46E5] underline">
           Créer un nouveau compte
         </Link>
       </p>

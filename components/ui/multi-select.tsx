@@ -38,11 +38,11 @@ export function MultiSelect({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-sm font-medium text-slate-200">{label}</label>
+        <label className="text-sm font-medium text-[#4A4E5E]">{label}</label>
       )}
       
-      <div className="rounded-(--radius) border border-white/15 bg-slate-950/40 p-3">
-        <p className="text-xs text-slate-400 mb-2">{placeholder}</p>
+      <div className="rounded-[var(--radius)] border border-[#E3E6EC] bg-white p-3 shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF]">
+        <p className="mb-2 text-xs text-[#6B7280]">{placeholder}</p>
         <div className="flex flex-wrap gap-2">
           {options.map((option) => {
             const isSelected = value.includes(option.value);
@@ -52,11 +52,10 @@ export function MultiSelect({
                 type="button"
                 onClick={() => toggleOption(option.value)}
                 className={cn(
-                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
-                  "border focus:outline-none focus:ring-2 focus:ring-emerald-200",
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30",
                   isSelected
-                    ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-100"
-                    : "bg-slate-800/50 border-white/10 text-slate-300 hover:border-emerald-400/30"
+                    ? "border-[#4F46E5]/40 bg-[#4F46E5]/10 text-[#4F46E5]"
+                    : "border-[#E3E6EC] bg-white text-[#4A4E5E] hover:border-[#4F46E5]/30"
                 )}
               >
                 {isSelected && <Check className="h-3 w-3" />}
@@ -66,14 +65,14 @@ export function MultiSelect({
           })}
         </div>
         {value.length > 0 && (
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="mt-2 text-xs text-[#6B7280]">
             {value.length} sélectionné{value.length > 1 ? 's' : ''}
           </p>
         )}
       </div>
       
-      {error && <p className="text-xs text-rose-300">{error}</p>}
-      {helperText && !error && <p className="text-xs text-slate-400">{helperText}</p>}
+      {error && <p className="text-xs text-rose-400">{error}</p>}
+      {helperText && !error && <p className="text-xs text-[#6B7280]">{helperText}</p>}
     </div>
   );
 }

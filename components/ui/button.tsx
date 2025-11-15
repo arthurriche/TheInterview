@@ -4,15 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-[var(--radius)] text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-[999px] text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#EEEFF3] disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "bg-emerald-500/90 text-slate-900 hover:bg-emerald-400 shadow-glow-green",
-        secondary: "bg-white/10 text-slate-100 hover:bg-white/20 border border-white/15",
-        ghost: "text-slate-200 hover:bg-white/10",
+        primary:
+          "bg-gradient-to-r from-[#C7D2FE] via-[#8B5CF6] to-[#4F46E5] text-[#1C1F2B] shadow-[0_18px_40px_rgba(79,70,229,0.25)] hover:shadow-[0_12px_30px_rgba(79,70,229,0.3)]",
+        secondary:
+          "bg-white text-[#2A2D3A] border border-[#E3E6EC] hover:bg-[#F4F5F9] shadow-[6px_6px_16px_rgba(209,212,217,0.7)]",
+        ghost: "text-[#4F46E5] hover:bg-[#4F46E5]/10",
         outline:
-          "border border-emerald-400/70 text-emerald-200 hover:bg-emerald-400/10 shadow-glow-green/40"
+          "border border-[#4F46E5]/70 text-[#4F46E5] hover:bg-[#4F46E5]/10 shadow-[6px_6px_16px_rgba(209,212,217,0.7)]"
       },
       size: {
         sm: "h-9 px-4",

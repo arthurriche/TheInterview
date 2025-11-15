@@ -20,7 +20,7 @@ interface StepOneIdentityProps {
 }
 
 const inputClass =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) {
   const {
@@ -31,7 +31,7 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
   return (
     <div className="grid gap-6">
       <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="signup-email">
+        <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-email">
           Email
         </label>
         <input
@@ -47,11 +47,11 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
           )}
           placeholder="prenom@banque.com"
         />
-        {errors.email ? <p className="text-xs text-rose-300">{errors.email.message}</p> : null}
+        {errors.email ? <p className="text-xs text-rose-400">{errors.email.message}</p> : null}
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="signup-password">
+        <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-password">
           Mot de passe
         </label>
         <input
@@ -67,13 +67,13 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
           )}
           placeholder="Au moins 8 caractères"
         />
-        <p className="text-xs text-slate-400">Minimum 8 caractères, idéalement une combinaison de lettres et chiffres.</p>
-        {errors.password ? <p className="text-xs text-rose-300">{errors.password.message}</p> : null}
+        <p className="text-xs text-[#6B7280]">Minimum 8 caractères, idéalement une combinaison de lettres et chiffres.</p>
+        {errors.password ? <p className="text-xs text-rose-400">{errors.password.message}</p> : null}
       </div>
 
       <div className="grid gap-2 md:grid-cols-2 md:gap-4">
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signup-firstname">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-firstname">
             Prénom
           </label>
           <input
@@ -85,12 +85,12 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
             placeholder="Arthur"
           />
           {errors.firstName ? (
-            <p className="text-xs text-rose-300">{errors.firstName.message}</p>
+            <p className="text-xs text-rose-400">{errors.firstName.message}</p>
           ) : null}
         </div>
 
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signup-lastname">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-lastname">
             Nom
           </label>
           <input
@@ -101,12 +101,12 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
             className={cn(inputClass, errors.lastName && "border-rose-400/70 focus:ring-rose-200")}
             placeholder="Dupont"
           />
-          {errors.lastName ? <p className="text-xs text-rose-300">{errors.lastName.message}</p> : null}
+          {errors.lastName ? <p className="text-xs text-rose-400">{errors.lastName.message}</p> : null}
         </div>
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="signup-dob">
+        <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-dob">
           Date de naissance
         </label>
         <input
@@ -117,7 +117,7 @@ export function StepOneIdentity({ form, disabledFields }: StepOneIdentityProps) 
           className={cn(inputClass, errors.dob && "border-rose-400/70 focus:ring-rose-200")}
           max={new Date().toISOString().slice(0, 10)}
         />
-        {errors.dob ? <p className="text-xs text-rose-300">{errors.dob.message}</p> : null}
+        {errors.dob ? <p className="text-xs text-rose-400">{errors.dob.message}</p> : null}
       </div>
     </div>
   );

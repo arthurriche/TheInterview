@@ -222,13 +222,15 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* LinkedIn Auto-fill */}
       <BentoCard padding="lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-            <Link2 className="h-5 w-5 text-blue-300" />
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5]/10">
+            <Link2 className="h-5 w-5 text-[#4F46E5]" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-slate-100">Auto-remplissage LinkedIn</h2>
-            <p className="text-sm text-slate-400 mt-1">Collez un lien d'offre LinkedIn pour remplir automatiquement les champs</p>
+            <h2 className="text-xl font-semibold text-[#1F2432]">Auto-remplissage LinkedIn</h2>
+            <p className="mt-1 text-sm text-[#6B7280]">
+              Collez un lien d&apos;offre LinkedIn pour remplir automatiquement les champs
+            </p>
           </div>
         </div>
 
@@ -266,12 +268,12 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
         {/* Summary Box */}
         {extractedSummary && (
-          <div className="mt-4 p-4 rounded-lg bg-blue-500/10 border border-blue-400/30">
+          <div className="mt-4 rounded-2xl border border-[#4F46E5]/20 bg-[#4F46E5]/5 p-4">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="h-5 w-5 text-blue-300 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#4F46E5]" />
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-blue-100 mb-1">Analyse de l'offre</h3>
-                <p className="text-sm text-blue-200/80 leading-relaxed">{extractedSummary}</p>
+                <h3 className="mb-1 text-sm font-semibold text-[#1F2432]">Analyse de l&apos;offre</h3>
+                <p className="text-sm leading-relaxed text-[#4A4E5E]">{extractedSummary}</p>
               </div>
             </div>
           </div>
@@ -280,11 +282,11 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
       {/* Informations générales */}
       <BentoCard padding="lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-            <Briefcase className="h-5 w-5 text-emerald-200" />
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5]/10">
+            <Briefcase className="h-5 w-5 text-[#4F46E5]" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-100">Informations générales</h2>
+          <h2 className="text-xl font-semibold text-[#1F2432]">Informations générales</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -326,22 +328,22 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
             control={control}
             render={({ field }) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-200">
-                  Entreprise <span className="text-rose-400 ml-1">*</span>
+                <label className="text-sm font-medium text-[#4A4E5E]">
+                  Entreprise <span className="ml-1 text-rose-400">*</span>
                 </label>
                 <input
                   {...field}
                   value={field.value ?? ""}
                   list="companies"
                   placeholder="Sélectionner ou saisir"
-                  className="w-full rounded-(--radius) border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
                 />
                 <datalist id="companies">
                   {COMPANIES.map((company) => (
                     <option key={company} value={company} />
                   ))}
                 </datalist>
-                {errors.company && <p className="text-xs text-rose-300">{errors.company.message}</p>}
+                {errors.company && <p className="text-xs text-rose-400">{errors.company.message}</p>}
               </div>
             )}
           />
@@ -351,22 +353,22 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
             control={control}
             render={({ field }) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-200">
-                  Poste <span className="text-rose-400 ml-1">*</span>
+                <label className="text-sm font-medium text-[#4A4E5E]">
+                  Poste <span className="ml-1 text-rose-400">*</span>
                 </label>
                 <input
                   {...field}
                   value={field.value ?? ""}
                   list="roles"
                   placeholder="Sélectionner ou saisir"
-                  className="w-full rounded-(--radius) border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
                 />
                 <datalist id="roles">
                   {ROLES.map((role) => (
                     <option key={role} value={role} />
                   ))}
                 </datalist>
-                {errors.role && <p className="text-xs text-rose-300">{errors.role.message}</p>}
+                {errors.role && <p className="text-xs text-rose-400">{errors.role.message}</p>}
               </div>
             )}
           />
@@ -375,11 +377,11 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
       {/* Focus areas */}
       <BentoCard padding="lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-            <Target className="h-5 w-5 text-emerald-200" />
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5]/10">
+            <Target className="h-5 w-5 text-[#4F46E5]" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-100">Axes de travail</h2>
+          <h2 className="text-xl font-semibold text-[#1F2432]">Axes de travail</h2>
         </div>
 
         <Controller
@@ -399,23 +401,23 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
       {/* Documents */}
       <BentoCard padding="lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-            <FileText className="h-5 w-5 text-emerald-200" />
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5]/10">
+            <FileText className="h-5 w-5 text-[#4F46E5]" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-100">Documents</h2>
+          <h2 className="text-xl font-semibold text-[#1F2432]">Documents</h2>
         </div>
 
         <div className="space-y-4">
           {/* CV */}
           <div>
             {existingCvPath && (
-              <div className="mb-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-400/30 flex items-start justify-between">
+              <div className="mb-3 flex items-start justify-between rounded-2xl border border-[#4F46E5]/30 bg-[#4F46E5]/5 p-3">
                 <div className="flex items-start gap-2">
-                  <FileText className="h-4 w-4 text-emerald-200 mt-0.5" />
+                  <FileText className="mt-0.5 h-4 w-4 text-[#4F46E5]" />
                   <div>
-                    <p className="text-sm font-medium text-emerald-100">CV existant détecté</p>
-                    <p className="text-xs text-emerald-200/70">Nous utiliserons votre CV de profil</p>
+                    <p className="text-sm font-medium text-[#1F2432]">CV existant détecté</p>
+                    <p className="text-xs text-[#4A4E5E]">Nous utiliserons votre CV de profil</p>
                   </div>
                 </div>
                 <Button
@@ -432,7 +434,7 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
             {(!existingCvPath || !useExistingCV) && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-200">CV (optionnel)</label>
+                <label className="text-sm font-medium text-[#4A4E5E]">CV (optionnel)</label>
                 <Controller
                   name="cvFile"
                   control={control}
@@ -445,14 +447,14 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
                     />
                   )}
                 />
-                <p className="text-xs text-slate-400">Le CV permet de personnaliser les questions comportementales</p>
+                <p className="text-xs text-[#6B7280]">Le CV permet de personnaliser les questions comportementales</p>
               </div>
             )}
           </div>
 
           {/* Job Offer */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-200">Offre d'emploi (optionnel)</label>
+            <label className="text-sm font-medium text-[#4A4E5E]">Offre d&apos;emploi (optionnel)</label>
             <Controller
               name="jobOfferFile"
               control={control}
@@ -465,7 +467,7 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
                 />
               )}
             />
-            <p className="text-xs text-slate-400">L'offre permet d'adapter les questions au contexte du poste</p>
+            <p className="text-xs text-[#6B7280]">L&apos;offre permet d&apos;adapter les questions au contexte du poste</p>
           </div>
         </div>
       </BentoCard>

@@ -75,10 +75,10 @@ interface ProfileFormProps {
 }
 
 const inputClass =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E0E4EE] bg-white px-4 py-3 text-sm text-[#2A2D3A] placeholder:text-[#9CA3AF] shadow-[inset_4px_4px_12px_rgba(209,212,217,0.6)] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 const selectClass =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E0E4EE] bg-white px-4 py-3 text-sm text-[#2A2D3A] shadow-[inset_4px_4px_12px_rgba(209,212,217,0.6)] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 export function ProfileForm({ userId, profile, onProfileChange }: ProfileFormProps) {
   const supabase = createSupabaseBrowserClient();
@@ -147,8 +147,8 @@ export function ProfileForm({ userId, profile, onProfileChange }: ProfileFormPro
     <BentoCard padding="lg" className="space-y-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Informations personnelles</h2>
-          <p className="text-sm text-slate-400">
+          <h2 className="text-xl font-semibold text-[#2A2D3A]">Informations personnelles</h2>
+          <p className="text-sm text-[#6B7280]">
             Mets à jour ton identité et tes informations de contact.
           </p>
         </div>
@@ -164,70 +164,70 @@ export function ProfileForm({ userId, profile, onProfileChange }: ProfileFormPro
 
       <form id={formId} className="grid gap-5 md:grid-cols-2" onSubmit={onSubmit}>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-first-name">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-first-name">
             Prénom *
           </label>
           <input
             id="account-first-name"
             type="text"
             autoComplete="given-name"
-            className={cn(inputClass, errors.firstName && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(inputClass, errors.firstName && "border-rose-300 focus:ring-rose-200")}
             {...register("firstName")}
           />
           {errors.firstName ? (
-            <p className="text-xs text-rose-300">{errors.firstName.message}</p>
+            <p className="text-xs text-rose-400">{errors.firstName.message}</p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-last-name">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-last-name">
             Nom *
           </label>
           <input
             id="account-last-name"
             type="text"
             autoComplete="family-name"
-            className={cn(inputClass, errors.lastName && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(inputClass, errors.lastName && "border-rose-300 focus:ring-rose-200")}
             {...register("lastName")}
           />
-          {errors.lastName ? <p className="text-xs text-rose-300">{errors.lastName.message}</p> : null}
+          {errors.lastName ? <p className="text-xs text-rose-400">{errors.lastName.message}</p> : null}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-dob">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-dob">
             Date de naissance
           </label>
           <input
             id="account-dob"
             type="date"
             max={new Date().toISOString().slice(0, 10)}
-            className={cn(inputClass, errors.dob && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(inputClass, errors.dob && "border-rose-300 focus:ring-rose-200")}
             {...register("dob")}
           />
-          {errors.dob ? <p className="text-xs text-rose-300">{errors.dob.message}</p> : null}
+          {errors.dob ? <p className="text-xs text-rose-400">{errors.dob.message}</p> : null}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-school">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-school">
             École / Université
           </label>
           <input
             id="account-school"
             type="text"
             placeholder="HEC, ESCP, Centrale..."
-            className={cn(inputClass, errors.school && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(inputClass, errors.school && "border-rose-300 focus:ring-rose-200")}
             {...register("school")}
           />
-          {errors.school ? <p className="text-xs text-rose-300">{errors.school.message}</p> : null}
+          {errors.school ? <p className="text-xs text-rose-400">{errors.school.message}</p> : null}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-sector">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-sector">
             Secteur d&apos;intérêt
           </label>
           <select
             id="account-sector"
-            className={cn(selectClass, errors.sector && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(selectClass, errors.sector && "border-rose-300 focus:ring-rose-200")}
             {...register("sector")}
           >
             <option value="">Sélectionner</option>
@@ -237,16 +237,16 @@ export function ProfileForm({ userId, profile, onProfileChange }: ProfileFormPro
               </option>
             ))}
           </select>
-          {errors.sector ? <p className="text-xs text-rose-300">{errors.sector.message}</p> : null}
+          {errors.sector ? <p className="text-xs text-rose-400">{errors.sector.message}</p> : null}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-referral">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-referral">
             Comment as-tu entendu parler de nous ?
           </label>
           <select
             id="account-referral"
-            className={cn(selectClass, errors.referral && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(selectClass, errors.referral && "border-rose-300 focus:ring-rose-200")}
             {...register("referral")}
           >
             <option value="">Sélectionner</option>
@@ -256,24 +256,24 @@ export function ProfileForm({ userId, profile, onProfileChange }: ProfileFormPro
               </option>
             ))}
           </select>
-          {errors.referral ? <p className="text-xs text-rose-300">{errors.referral.message}</p> : null}
+          {errors.referral ? <p className="text-xs text-rose-400">{errors.referral.message}</p> : null}
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="account-linkedin">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="account-linkedin">
             Profil LinkedIn
           </label>
           <input
             id="account-linkedin"
             type="url"
             placeholder="https://www.linkedin.com/in/..."
-            className={cn(inputClass, errors.linkedinUrl && "border-rose-400/70 focus:ring-rose-200")}
+            className={cn(inputClass, errors.linkedinUrl && "border-rose-300 focus:ring-rose-200")}
             {...register("linkedinUrl")}
           />
           {errors.linkedinUrl ? (
-            <p className="text-xs text-rose-300">{errors.linkedinUrl.message}</p>
+            <p className="text-xs text-rose-400">{errors.linkedinUrl.message}</p>
           ) : (
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6B7280]">
               Utilisé pour personnaliser tes sessions de fit et te recommander du contenu pertinent.
             </p>
           )}

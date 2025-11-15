@@ -35,10 +35,10 @@ export function RightSidebar() {
             onClick={onLinkClick}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200",
+              "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200",
               isActive
-                ? "bg-emerald-500/10 text-emerald-200 shadow-sm border border-emerald-400/20"
-                : "text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent"
+                ? "bg-[#4F46E5]/10 text-[#4F46E5] border border-[#4F46E5]/20 shadow-[inset_2px_2px_6px_rgba(79,70,229,0.2)]"
+                : "text-[#6B7280] hover:bg-white/70 hover:text-[#2A2D3A] border border-transparent"
             )}
             title={!isExpanded ? link.label : undefined}
           >
@@ -71,7 +71,7 @@ export function RightSidebar() {
       {/* Desktop Sidebar - Left, Collapsable with hover expand */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col shrink-0 sticky top-6 h-[calc(100vh-3rem)] border-r border-white/10 bg-slate-950/50 backdrop-blur-sm transition-all duration-300 ease-in-out rounded-xl overflow-hidden",
+          "hidden lg:flex flex-col shrink-0 sticky top-10 h-[calc(100vh-5rem)] rounded-[30px] border border-white/70 bg-[#F8F9FC]/90 backdrop-blur-sm transition-all duration-300 ease-in-out shadow-[25px_25px_60px_#C9CCD3,-25px_-25px_60px_#FFFFFF]",
           isExpanded ? "w-64" : "w-20"
         )}
         aria-label="Barre latérale de navigation"
@@ -80,14 +80,17 @@ export function RightSidebar() {
       >
         <div className="flex h-full flex-col p-4">
           {/* Header with collapse toggle */}
-          <div className={cn("flex items-center mb-6", isExpanded ? "justify-between" : "justify-center")}>
+          <div className={cn("mb-6 flex items-center", isExpanded ? "justify-between" : "justify-center")}>
             {isExpanded && (
-              <h2 className="text-lg font-semibold text-slate-100 truncate">FinanceBro</h2>
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-[#9CA3AF]">FinanceBro</p>
+                <h2 className="text-lg font-semibold text-[#2A2D3A] truncate">Espace membre</h2>
+              </div>
             )}
             <button
               onClick={() => setCollapsed(!collapsed)}
               className={cn(
-                "rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors",
+                "rounded-xl p-2 text-[#6B7280] hover:bg-white hover:text-[#4F46E5] transition-colors",
                 !isExpanded && "mx-auto"
               )}
               aria-label={collapsed ? "Étendre la sidebar" : "Réduire la sidebar"}
@@ -101,18 +104,18 @@ export function RightSidebar() {
           </div>
 
           {/* Navigation */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto pr-2">
             <SidebarContent />
           </div>
 
-          <div className="mt-auto pt-4">
-            <div className="border-t border-white/10 pt-4">
+          <div className="mt-auto pt-6">
+            <div className="border-t border-white/70 pt-4">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "w-full justify-center gap-2 text-slate-300 hover:bg-white/5 hover:text-emerald-200",
+                  "w-full justify-center gap-2 text-[#4F46E5] hover:bg-white/80",
                   !isExpanded && "px-2"
                 )}
                 onClick={handleLogout}
@@ -125,7 +128,7 @@ export function RightSidebar() {
 
             {!isExpanded && (
               <div className="mt-4 flex justify-center">
-                <div className="h-1 w-6 rounded-full bg-slate-700" />
+                <div className="h-1 w-6 rounded-full bg-[#D1D4D9]" />
               </div>
             )}
           </div>
@@ -137,7 +140,7 @@ export function RightSidebar() {
         <Button
           variant="secondary"
           size="sm"
-          className="h-12 w-12 p-0 rounded-xl shadow-lg"
+          className="h-12 w-12 rounded-2xl p-0 shadow-[12px_12px_24px_rgba(209,212,217,0.8)]"
           aria-label="Ouvrir le menu"
           onClick={() => setMobileMenuOpen(true)}
         >
@@ -149,16 +152,19 @@ export function RightSidebar() {
       {mobileMenuOpen && (
         <>
           <div
-            className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="lg:hidden fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="lg:hidden fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-white/10 bg-slate-950 shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-lg font-semibold text-slate-100">FinanceBro</h2>
+          <div className="lg:hidden fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-white/70 bg-[#F8F9FC] shadow-[30px_30px_60px_rgba(201,204,211,0.9)]">
+            <div className="flex items-center justify-between border-b border-white/70 p-6">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-[#9CA3AF]">FinanceBro</p>
+                <h2 className="text-lg font-semibold text-[#2A2D3A]">Menu</h2>
+              </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors"
+                className="rounded-xl p-2 text-[#6B7280] hover:bg-white hover:text-[#4F46E5] transition-colors"
                 aria-label="Fermer le menu"
               >
                 <X className="h-5 w-5" />
@@ -167,7 +173,7 @@ export function RightSidebar() {
             <div className="flex-1 overflow-y-auto p-6">
               <SidebarContent onLinkClick={() => setMobileMenuOpen(false)} />
             </div>
-            <div className="border-t border-white/10 p-6">
+            <div className="border-t border-white/70 p-6">
               <Button
                 type="button"
                 variant="secondary"

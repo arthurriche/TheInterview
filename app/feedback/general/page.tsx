@@ -40,8 +40,8 @@ export default function FeedbackGeneralPage() {
       className="gap-8"
     >
       <BentoCard padding="lg" emphasis="primary">
-        <h2 className="text-lg font-semibold text-slate-50">Résumé exécutif</h2>
-        <ul className="mt-3 space-y-2 text-sm text-slate-200">
+        <h2 className="text-lg font-semibold text-[#1F2432]">Résumé exécutif</h2>
+        <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
           <li>- Solide maîtrise des flows IB, besoin de renforcer la précision marchés.</li>
           <li>- Latence moyenne 3.4s, objectif 2.5s.</li>
           <li>- Impact narratif à consolider sur les exemples leadership.</li>
@@ -50,16 +50,16 @@ export default function FeedbackGeneralPage() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <BentoCard padding="lg">
-          <h3 className="text-sm font-semibold text-emerald-200">Forces</h3>
-          <ul className="mt-3 space-y-2 text-sm text-slate-200">
+          <h3 className="text-sm font-semibold text-[#4F46E5]">Forces</h3>
+          <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
             {strengths.map((item) => (
               <li key={item}>- {item}</li>
             ))}
           </ul>
         </BentoCard>
         <BentoCard padding="lg">
-          <h3 className="text-sm font-semibold text-amber-200">Travailler en priorité</h3>
-          <ul className="mt-3 space-y-2 text-sm text-slate-200">
+          <h3 className="text-sm font-semibold text-[#F59E0B]">Travailler en priorité</h3>
+          <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
             {priorities.map((item) => (
               <li key={item}>- {item}</li>
             ))}
@@ -68,8 +68,8 @@ export default function FeedbackGeneralPage() {
       </div>
 
       <BentoCard padding="lg">
-        <h3 className="text-sm font-semibold text-rose-200">Erreurs techniques à corriger</h3>
-        <ul className="mt-3 space-y-2 text-sm text-slate-200">
+        <h3 className="text-sm font-semibold text-[#E11D48]">Erreurs techniques à corriger</h3>
+        <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
           {errors.map((item) => (
             <li key={item}>- {item}</li>
           ))}
@@ -77,8 +77,8 @@ export default function FeedbackGeneralPage() {
       </BentoCard>
 
       <BentoCard padding="lg">
-        <h3 className="text-sm font-semibold text-slate-100">Plan d&apos;entraînement 7 jours</h3>
-        <ul className="mt-3 space-y-2 text-sm text-slate-200">
+        <h3 className="text-sm font-semibold text-[#1F2432]">Plan d&apos;entraînement 7 jours</h3>
+        <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
           {plan.map((item) => (
             <li key={item}>- {item}</li>
           ))}

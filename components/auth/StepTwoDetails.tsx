@@ -21,10 +21,10 @@ interface StepTwoDetailsProps {
 }
 
 const inputClassDark =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 const selectClass =
-  "w-full rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200";
+  "w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20";
 
 const sectors = [
   "finance de marché",
@@ -61,7 +61,7 @@ export function StepTwoDetails({ form, isSubmitting, onBack, onSkip }: StepTwoDe
       />
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="signup-linkedin">
+        <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-linkedin">
           Profil LinkedIn (optionnel)
         </label>
         <input
@@ -76,16 +76,16 @@ export function StepTwoDetails({ form, isSubmitting, onBack, onSkip }: StepTwoDe
           )}
         />
         {errors.linkedin ? (
-          <p className="text-xs text-rose-300">{errors.linkedin.message}</p>
+          <p className="text-xs text-rose-400">{errors.linkedin.message}</p>
         ) : (
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[#6B7280]">
             Utilisé pour personnaliser tes questions de fit et recommandations networking.
           </p>
         )}
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="signup-school">
+        <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-school">
           École / université (optionnel)
         </label>
         <input
@@ -95,12 +95,12 @@ export function StepTwoDetails({ form, isSubmitting, onBack, onSkip }: StepTwoDe
           {...register("school")}
           className={cn(inputClassDark, errors.school && "border-rose-400/70 focus:ring-rose-200")}
         />
-        {errors.school ? <p className="text-xs text-rose-300">{errors.school.message}</p> : null}
+        {errors.school ? <p className="text-xs text-rose-400">{errors.school.message}</p> : null}
       </div>
 
       <div className="grid gap-2 md:grid-cols-2 md:gap-4">
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signup-sector">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-sector">
             Secteur d&apos;intérêt
           </label>
           <select
@@ -116,11 +116,11 @@ export function StepTwoDetails({ form, isSubmitting, onBack, onSkip }: StepTwoDe
               </option>
             ))}
           </select>
-          {errors.sector ? <p className="text-xs text-rose-300">{errors.sector.message}</p> : null}
+          {errors.sector ? <p className="text-xs text-rose-400">{errors.sector.message}</p> : null}
         </div>
 
         <div className="grid gap-2">
-          <label className="text-sm font-medium text-slate-200" htmlFor="signup-referral">
+          <label className="text-sm font-medium text-[#4A4E5E]" htmlFor="signup-referral">
             Comment as-tu entendu parler de nous ?
           </label>
           <select
@@ -137,7 +137,7 @@ export function StepTwoDetails({ form, isSubmitting, onBack, onSkip }: StepTwoDe
             ))}
           </select>
           {errors.referral ? (
-            <p className="text-xs text-rose-300">{errors.referral.message}</p>
+            <p className="text-xs text-rose-400">{errors.referral.message}</p>
           ) : null}
         </div>
       </div>

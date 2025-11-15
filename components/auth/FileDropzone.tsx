@@ -73,8 +73,8 @@ export function FileDropzone({
     <div>
       <div
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-white/20 bg-white/5 px-6 py-10 text-center transition hover:border-emerald-400/50",
-          dragging && "border-emerald-400/80 bg-emerald-400/5",
+          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-[#E3E6EC] bg-white px-6 py-10 text-center shadow-[inset_10px_10px_20px_#D1D4D9,inset_-10px_-10px_20px_#FFFFFF] transition hover:border-[#4F46E5]/50",
+          dragging && "border-[#4F46E5] bg-[#4F46E5]/5",
           disabled && "cursor-not-allowed opacity-60",
           hint && "border-rose-400/70"
         )}
@@ -107,16 +107,16 @@ export function FileDropzone({
         }}
         aria-disabled={disabled}
       >
-        <Upload className="h-8 w-8 text-emerald-300" aria-hidden="true" />
+        <Upload className="h-8 w-8 text-[#4F46E5]" aria-hidden="true" />
         {file ? (
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-100">{file.name}</p>
-            <p className="text-xs text-slate-300/80">
+            <p className="text-sm font-semibold text-[#1F2432]">{file.name}</p>
+            <p className="text-xs text-[#6B7280]">
               {(file.size / (1024 * 1024)).toFixed(2)} Mo · PDF
             </p>
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-200 hover:text-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
               onClick={(event) => {
                 event.stopPropagation();
                 setInternalError(null);
@@ -129,10 +129,10 @@ export function FileDropzone({
           </div>
         ) : (
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-100">
+            <p className="text-sm font-semibold text-[#1F2432]">
               Dépose ton CV (PDF, {maxSizeMb} Mo max)
             </p>
-            <p className="text-xs text-slate-300/80">
+            <p className="text-xs text-[#6B7280]">
               Le CV est optionnel mais recommandé pour personnaliser les scénarios IA.
             </p>
           </div>
@@ -147,7 +147,7 @@ export function FileDropzone({
         disabled={disabled}
         onChange={(event) => handleFiles(event.target.files)}
       />
-      {hint ? <p className="mt-2 text-xs text-rose-300">{hint}</p> : null}
+      {hint ? <p className="mt-2 text-xs text-rose-400">{hint}</p> : null}
     </div>
   );
 }

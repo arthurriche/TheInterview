@@ -13,20 +13,20 @@ export default function SettingsPage() {
 
       <div className="grid gap-4">
         <BentoCard padding="lg">
-          <h2 className="text-lg font-semibold text-slate-100 mb-4">Préférences</h2>
+          <h2 className="mb-4 text-lg font-semibold text-[#1F2432]">Préférences</h2>
           <div className="space-y-4 text-sm">
             <div>
-              <label className="text-slate-300 block mb-2">Langue</label>
-              <select className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-slate-100">
+              <label className="mb-2 block text-[#4A4E5E]">Langue</label>
+              <select className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-[#1F2432] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20">
                 <option value="fr">Français</option>
                 <option value="en">English</option>
               </select>
             </div>
             <div>
-              <label className="text-slate-300 block mb-2">Thème</label>
-              <select className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-slate-100">
-                <option value="dark">Sombre</option>
+              <label className="mb-2 block text-[#4A4E5E]">Thème</label>
+              <select className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-[#1F2432] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20">
                 <option value="light">Clair</option>
+                <option value="dark">Sombre</option>
                 <option value="auto">Automatique</option>
               </select>
             </div>
@@ -34,20 +34,22 @@ export default function SettingsPage() {
         </BentoCard>
 
         <BentoCard padding="lg">
-          <h2 className="text-lg font-semibold text-slate-100 mb-4">Notifications</h2>
+          <h2 className="mb-4 text-lg font-semibold text-[#1F2432]">Notifications</h2>
           <div className="space-y-3 text-sm">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="rounded border-white/10 bg-slate-900" defaultChecked />
-              <span className="text-slate-300">Recevoir les emails de feedbacks</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="rounded border-white/10 bg-slate-900" defaultChecked />
-              <span className="text-slate-300">Recevoir les conseils hebdomadaires</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="rounded border-white/10 bg-slate-900" />
-              <span className="text-slate-300">Recevoir les actualités produit</span>
-            </label>
+            {[
+              "Recevoir les emails de feedbacks",
+              "Recevoir les conseils hebdomadaires",
+              "Recevoir les actualités produit"
+            ].map((label, index) => (
+              <label key={label} className="flex cursor-pointer items-center gap-3">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded-md border border-[#E3E6EC] text-[#4F46E5] focus:ring-[#4F46E5]"
+                  defaultChecked={index < 2}
+                />
+                <span className="text-[#4A4E5E]">{label}</span>
+              </label>
+            ))}
           </div>
         </BentoCard>
       </div>

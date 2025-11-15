@@ -210,3 +210,53 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neu-light);
 }
+
+/**
+ * Authenticated shell overrides (neumorphic white)
+ */
+.app-shell {
+  background: var(--neu-base);
+  color: var(--neu-text-primary);
+}
+
+.app-shell [class*="text-slate-1"],
+.app-shell [class*="text-slate-2"],
+.app-shell [class*="text-white"] {
+  color: var(--neu-text-primary) !important;
+}
+
+.app-shell [class*="text-slate-3"],
+.app-shell [class*="text-slate-4"] {
+  color: var(--neu-text-secondary) !important;
+}
+
+.app-shell [class*="text-slate-5"],
+.app-shell [class*="text-slate-6"],
+.app-shell [class*="text-slate-7"] {
+  color: var(--neu-text-tertiary) !important;
+}
+
+.app-shell [class*="text-emerald-"] {
+  color: var(--neu-accent) !important;
+}
+
+.app-shell [class*="bg-slate-9"],
+.app-shell [class*="bg-slate-8"] {
+  background-color: var(--neu-base) !important;
+}
+
+.app-shell .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.app-shell .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.app-shell [class*="border-white\/"] {
+  border-color: rgba(209, 212, 217, 0.8) !important;
+}
+
+.app-shell [class*="text-emerald-"] {
+  color: var(--neu-accent) !important;
+}

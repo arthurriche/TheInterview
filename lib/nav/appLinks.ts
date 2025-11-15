@@ -1,4 +1,4 @@
-import { Home, Video, User, Settings, Users, Mail, FileText, type LucideIcon } from "lucide-react";
+import { Home, Video, User, Settings, Users, Mail, FileText, Trophy, type LucideIcon } from "lucide-react";
 
 export interface AppLink {
   label: string;
@@ -21,6 +21,11 @@ export const APP_LINKS: AppLink[] = [
     label: "Mes feedbacks",
     href: "/feedbacks",
     icon: FileText
+  },
+  {
+    label: "Challenges",
+    href: "/challenges",
+    icon: Trophy
   },
   {
     label: "Mon compte",

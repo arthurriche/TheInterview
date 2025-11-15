@@ -73,48 +73,48 @@ export default async function HomePage() {
 
   return (
     <main className="space-y-16 pb-12 pt-6">
-      <section className="relative overflow-hidden rounded-[36px] border border-white/10 bg-gradient-to-br from-emerald-500/10 via-slate-900/60 to-slate-950 p-10">
-        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-3xl" />
-        <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-[36px] border border-white/70 bg-gradient-to-br from-white via-[#F4F5F9] to-[#E3E6EC] p-10 shadow-[30px_30px_60px_rgba(201,204,211,0.6)]">
+        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#4F46E5]/10 blur-3xl" />
+        <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-[#A5B4FC]/20 blur-3xl" />
         <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-4">
-            <p className="text-xs uppercase tracking-[0.4em] text-emerald-200/80">
+            <p className="text-xs uppercase tracking-[0.4em] text-[#4F46E5]">
               Bienvenue de retour
             </p>
-            <h1 className="text-3xl font-semibold text-white md:text-4xl">
+            <h1 className="text-3xl font-semibold text-[#1F2432] md:text-4xl">
               Prêt pour ta prochaine simulation, {displayName} ?
             </h1>
-            <p className="max-w-xl text-base text-slate-200/85">
+            <p className="max-w-xl text-base text-[#4A4E5E]">
               FinanceBro a préparé une nouvelle session sur mesure et consolidé les feedbacks de tes
               trois derniers entretiens mock. On t&apos;a aussi déniché des axes pour progresser cette
               semaine.
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300/80">
-              <span className="rounded-full border border-white/10 px-4 py-1 uppercase tracking-[0.35em]">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B7280]">
+              <span className="rounded-full border border-white/80 bg-white px-4 py-1 uppercase tracking-[0.35em] shadow-[inset_2px_2px_4px_rgba(209,212,217,0.5)]">
                 programme {user?.plan ?? "free"}
               </span>
-              <span className="rounded-full border border-white/10 px-4 py-1 uppercase tracking-[0.35em]">
+              <span className="rounded-full border border-white/80 bg-white px-4 py-1 uppercase tracking-[0.35em] shadow-[inset_2px_2px_4px_rgba(209,212,217,0.5)]">
                 7 jours restants avant review
               </span>
             </div>
           </div>
-          <div className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
+          <div className="grid gap-4 rounded-3xl border border-white/70 bg-white/90 p-6 text-sm text-[#4A4E5E] shadow-[12px_12px_30px_rgba(201,204,211,0.5)]">
             <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-emerald-200/80">Score moyen</p>
-              <p className="mt-2 text-3xl font-semibold text-white">74 / 100</p>
+              <p className="text-xs uppercase tracking-[0.35em] text-[#4F46E5]">Score moyen</p>
+              <p className="mt-2 text-3xl font-semibold text-[#1F2432]">74 / 100</p>
             </div>
             <div className="grid gap-3">
               <div className="flex items-center justify-between">
                 <span>Technique</span>
-                <span className="font-semibold text-emerald-200">+6</span>
+                <span className="font-semibold text-[#4F46E5]">+6</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Comportemental</span>
-                <span className="font-semibold text-emerald-200">+4</span>
+                <span className="font-semibold text-[#4F46E5]">+4</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Storytelling</span>
-                <span className="font-semibold text-emerald-200">+5</span>
+                <span className="font-semibold text-[#4F46E5]">+5</span>
               </div>
             </div>
           </div>
@@ -124,8 +124,8 @@ export default async function HomePage() {
       <section className="space-y-8">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-white">Actions rapides</h2>
-            <p className="text-sm text-slate-300/80">
+            <h2 className="text-2xl font-semibold text-[#1F2432]">Actions rapides</h2>
+            <p className="text-sm text-[#6B7280]">
               En un clic, lance une nouvelle session ou reprends ton entraînement là où tu l&apos;as laissé.
             </p>
           </div>
@@ -135,16 +135,16 @@ export default async function HomePage() {
             <Link
               key={action.title}
               href={action.href}
-              className="group flex h-full flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-emerald-400/50 hover:bg-white/8"
+              className="group flex h-full flex-col gap-4 rounded-3xl border border-white/70 bg-white p-6 shadow-[15px_15px_40px_rgba(201,204,211,0.6)] transition hover:-translate-y-1"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-200">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5]">
                 <action.icon className="h-6 w-6" aria-hidden="true" />
               </span>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-white">{action.title}</h3>
-                <p className="text-sm text-slate-300/90">{action.description}</p>
+                <h3 className="text-lg font-semibold text-[#1F2432]">{action.title}</h3>
+                <p className="text-sm text-[#4A4E5E]">{action.description}</p>
               </div>
-              <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-emerald-200 transition group-hover:translate-x-1">
+              <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[#4F46E5] transition group-hover:translate-x-1">
                 Ouvrir
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </span>
@@ -156,14 +156,14 @@ export default async function HomePage() {
       <section className="space-y-8">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-white">Derniers feedbacks</h2>
-            <p className="text-sm text-slate-300/80">
+            <h2 className="text-2xl font-semibold text-[#1F2432]">Derniers feedbacks</h2>
+            <p className="text-sm text-[#6B7280]">
               Synthèse automatisée de tes trois derniers entretiens mock.
             </p>
           </div>
           <Link
             href="/feedback/general"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200 transition hover:border-emerald-400/40 hover:text-emerald-200"
+            className="inline-flex items-center gap-2 rounded-full border border-[#4F46E5]/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#4F46E5] transition hover:bg-[#4F46E5]/10"
           >
             Voir plus
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -173,12 +173,12 @@ export default async function HomePage() {
           {feedbackCards.map((card) => (
             <article
               key={card.title}
-              className="flex h-full flex-col gap-3 rounded-3xl border border-white/10 bg-white/5 p-6"
+              className="flex h-full flex-col gap-3 rounded-3xl border border-white/70 bg-white p-6 shadow-[12px_12px_32px_rgba(201,204,211,0.6)]"
             >
-              <p className="text-xs uppercase tracking-[0.35em] text-emerald-200/80">{card.date}</p>
-              <h3 className="text-lg font-semibold text-white">{card.title}</h3>
-              <p className="text-sm font-semibold text-emerald-200">{card.highlight}</p>
-              <p className="text-sm text-slate-300/90">{card.details}</p>
+              <p className="text-xs uppercase tracking-[0.35em] text-[#4F46E5]">{card.date}</p>
+              <h3 className="text-lg font-semibold text-[#1F2432]">{card.title}</h3>
+              <p className="text-sm font-semibold text-[#4F46E5]">{card.highlight}</p>
+              <p className="text-sm text-[#4A4E5E]">{card.details}</p>
             </article>
           ))}
         </div>
@@ -187,8 +187,8 @@ export default async function HomePage() {
       <section className="space-y-8">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-white">Progresser cette semaine</h2>
-            <p className="text-sm text-slate-300/80">
+            <h2 className="text-2xl font-semibold text-[#1F2432]">Progresser cette semaine</h2>
+            <p className="text-sm text-[#6B7280]">
               Axes recommandés par l&apos;IA en fonction de ton dernier scoring.
             </p>
           </div>
@@ -197,14 +197,14 @@ export default async function HomePage() {
           {improvements.map((item) => (
             <div
               key={item.axis}
-              className="flex h-full flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6"
+              className="flex h-full flex-col gap-4 rounded-3xl border border-white/70 bg-white p-6 shadow-[12px_12px_32px_rgba(201,204,211,0.6)]"
             >
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-[0.35em] text-emerald-200/80">{item.axis}</p>
-                <p className="text-sm text-slate-300/90">{item.suggestion}</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-[#4F46E5]">{item.axis}</p>
+                <p className="text-sm text-[#4A4E5E]">{item.suggestion}</p>
               </div>
-              <div className="mt-auto inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">
-                <FileText className="h-4 w-4 text-emerald-200" aria-hidden="true" />
+              <div className="mt-auto inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#4A4E5E]">
+                <FileText className="h-4 w-4 text-[#4F46E5]" aria-hidden="true" />
                 {item.resource}
               </div>
             </div>
@@ -213,18 +213,18 @@ export default async function HomePage() {
       </section>
 
       {isFreePlan ? (
-        <section className="rounded-[32px] border border-emerald-400/40 bg-emerald-500/15 p-10 text-center">
+        <section className="rounded-[32px] border border-[#4F46E5]/20 bg-[#4F46E5]/5 p-10 text-center shadow-[20px_20px_50px_rgba(201,204,211,0.6)]">
           <div className="mx-auto max-w-3xl space-y-4">
-            <p className="text-xs uppercase tracking-[0.4em] text-emerald-200/90">Plan gratuit</p>
-            <h2 className="text-2xl font-semibold text-white md:text-3xl">
+            <p className="text-xs uppercase tracking-[0.4em] text-[#4F46E5]">Plan gratuit</p>
+            <h2 className="text-2xl font-semibold text-[#1F2432] md:text-3xl">
               Passe au plan Medium pour débloquer les sessions illimitées et le support coach
             </h2>
-            <p className="text-base text-slate-200/90">
+            <p className="text-base text-[#4A4E5E]">
               Débloque quatre simulations/mois, exports avancés et suivi coach. Résilie à tout moment.
             </p>
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center gap-3 rounded-full bg-emerald-400 px-8 py-3 text-sm font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#4F46E5] px-8 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]/50"
             >
               Découvrir les plans
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

@@ -37,7 +37,7 @@ export default function ContactPage() {
       <BentoCard padding="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#4A4E5E]">
               Nom
             </label>
             <input
@@ -46,13 +46,13 @@ export default function ContactPage() {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-white/10 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
               placeholder="Votre nom complet"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#4A4E5E]">
               Email
             </label>
             <input
@@ -61,13 +61,13 @@ export default function ContactPage() {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full rounded-lg border border-white/10 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
               placeholder="votre.email@exemple.com"
             />
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="message" className="mb-2 block text-sm font-medium text-[#4A4E5E]">
               Message
             </label>
             <textarea
@@ -76,7 +76,7 @@ export default function ContactPage() {
               rows={5}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full rounded-lg border border-white/10 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-[var(--radius)] border border-[#E3E6EC] bg-white px-4 py-3 text-sm text-[#1F2432] placeholder:text-[#9CA3AF] shadow-[inset_6px_6px_12px_#D1D4D9,inset_-6px_-6px_12px_#FFFFFF] focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
               placeholder="Décrivez votre demande..."
             />
           </div>
@@ -86,9 +86,9 @@ export default function ContactPage() {
               type="checkbox"
               checked={formData.requestDemo}
               onChange={(e) => setFormData({ ...formData, requestDemo: e.target.checked })}
-              className="rounded border-white/10 bg-slate-900"
+              className="h-4 w-4 rounded-md border border-[#E3E6EC] text-[#4F46E5] focus:ring-[#4F46E5]"
             />
-            <span className="text-sm text-slate-300">Je souhaite demander une démo</span>
+            <span className="text-sm text-[#4A4E5E]">Je souhaite demander une démo</span>
           </label>
 
           <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto">

@@ -161,8 +161,8 @@ export function CvManager({ userId, profile, onProfileChange }: CvManagerProps) 
     <BentoCard padding="lg" className="space-y-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Mon CV</h2>
-          <p className="text-sm text-slate-400">
+          <h2 className="text-xl font-semibold text-[#2A2D3A]">Mon CV</h2>
+          <p className="text-sm text-[#6B7280]">
             Importer un CV au format PDF. Il sera utilisé pour personnaliser tes sessions.
           </p>
         </div>
@@ -180,16 +180,16 @@ export function CvManager({ userId, profile, onProfileChange }: CvManagerProps) 
       </div>
 
       {currentPath ? (
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5">
+        <div className="rounded-2xl border border-[#E3E6EC] bg-white/90 p-5 shadow-[inset_8px_8px_16px_rgba(209,212,217,0.6)]">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-500/10">
-              <FileText className="h-6 w-6 text-emerald-200" aria-hidden="true" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#4F46E5]/10">
+              <FileText className="h-6 w-6 text-[#4F46E5]" aria-hidden="true" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-100">
+              <p className="text-sm font-medium text-[#2A2D3A]">
                 {currentPath.split("/").pop() ?? "cv.pdf"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#6B7280]">
                 Stocké de manière sécurisée. Le remplacement écrase le fichier existant.
               </p>
             </div>
@@ -213,7 +213,7 @@ export function CvManager({ userId, profile, onProfileChange }: CvManagerProps) 
               size="sm"
               onClick={triggerFileDialog}
               disabled={isUploading || isDeleting}
-              className="flex items-center gap-2 text-slate-200 hover:text-emerald-200"
+              className="flex items-center gap-2 text-[#4A4E5E] hover:text-[#4F46E5]"
             >
               <Upload className="h-4 w-4" aria-hidden="true" />
               {isUploading ? "Import en cours..." : "Remplacer"}
@@ -224,7 +224,7 @@ export function CvManager({ userId, profile, onProfileChange }: CvManagerProps) 
               size="sm"
               onClick={handlePreview}
               disabled={isPreviewLoading || isDownloading || isUploading || isDeleting}
-              className="flex items-center gap-2 text-slate-200 hover:text-emerald-200"
+              className="flex items-center gap-2 text-[#4A4E5E] hover:text-[#4F46E5]"
             >
               <Eye className="h-4 w-4" aria-hidden="true" />
               {isPreviewLoading ? "Chargement..." : "Aperçu"}
@@ -243,19 +243,19 @@ export function CvManager({ userId, profile, onProfileChange }: CvManagerProps) 
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-white/10 bg-slate-950/30 p-6 text-center">
-          <p className="text-sm text-slate-300">
+        <div className="rounded-2xl border border-dashed border-[#D9DDE3] bg-white/70 p-6 text-center">
+          <p className="text-sm text-[#6B7280]">
             Aucun CV importé pour le moment. Ajoute un PDF (max {MAX_FILE_SIZE_MB} Mo) pour enrichir ton
             coaching.
           </p>
         </div>
       )}
       {previewUrl ? (
-        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black/60">
+        <div className="relative overflow-hidden rounded-2xl border border-[#E3E6EC] bg-[#F8F9FC]">
           <button
             type="button"
             onClick={() => setPreviewUrl(null)}
-            className="absolute right-3 top-3 z-10 rounded-full bg-white/10 p-1 text-slate-200 hover:bg-white/20"
+            className="absolute right-3 top-3 z-10 rounded-full bg-white p-1 text-[#4F46E5] shadow-sm"
             aria-label="Fermer l'aperçu"
           >
             <X className="h-4 w-4" aria-hidden="true" />

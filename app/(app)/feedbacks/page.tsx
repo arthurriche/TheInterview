@@ -38,67 +38,63 @@ export default function FeedbacksPage() {
 
       {hasData ? (
         <div className="space-y-4">
-          {/* Stats overview */}
           <div className="grid gap-4 md:grid-cols-3">
             <BentoCard padding="lg" className="flex flex-col gap-2">
-              <p className="text-xs uppercase tracking-wider text-emerald-200/70">Total sessions</p>
-              <p className="text-2xl font-semibold text-slate-50">{feedbacks.length}</p>
+              <p className="text-xs uppercase tracking-wider text-[#4F46E5]">Total sessions</p>
+              <p className="text-2xl font-semibold text-[#1F2432]">{feedbacks.length}</p>
             </BentoCard>
-            
+
             <BentoCard padding="lg" className="flex flex-col gap-2">
-              <p className="text-xs uppercase tracking-wider text-emerald-200/70">Score moyen</p>
-              <p className="text-2xl font-semibold text-slate-50">
+              <p className="text-xs uppercase tracking-wider text-[#4F46E5]">Score moyen</p>
+              <p className="text-2xl font-semibold text-[#1F2432]">
                 {Math.round(feedbacks.reduce((acc, f) => acc + f.score, 0) / feedbacks.length)}%
               </p>
             </BentoCard>
-            
+
             <BentoCard padding="lg" className="flex flex-col gap-2">
-              <p className="text-xs uppercase tracking-wider text-emerald-200/70">Progression</p>
-              <p className="text-2xl font-semibold text-emerald-200 flex items-center gap-2">
+              <p className="text-xs uppercase tracking-wider text-[#4F46E5]">Progression</p>
+              <p className="text-2xl font-semibold text-[#4F46E5] flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />
                 +12%
               </p>
             </BentoCard>
           </div>
 
-          {/* Feedbacks list */}
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-100">Historique des sessions</h2>
+            <h2 className="text-lg font-semibold text-[#1F2432]">Historique des sessions</h2>
             {feedbacks.map((feedback) => (
-              <BentoCard key={feedback.id} padding="lg" className="hover:border-emerald-400/40 transition-all">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <BentoCard key={feedback.id} padding="lg" className="transition-all hover:-translate-y-1">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-200 shrink-0">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5]">
                       <FileText className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="font-semibold text-slate-100">
+                      <h3 className="font-semibold text-[#1F2432]">
                         {feedback.sector} - {feedback.role}
                       </h3>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-[#6B7280]">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {new Date(feedback.date).toLocaleDateString('fr-FR', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric' 
+                          {new Date(feedback.date).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
                           })}
                         </span>
-                        <span>Durée: {feedback.duration}</span>
+                        <span>Durée : {feedback.duration}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-2xl font-semibold text-slate-100">{feedback.score}%</p>
-                      <p className="text-xs text-slate-400">Score global</p>
+                      <p className="text-2xl font-semibold text-[#1F2432]">{feedback.score}%</p>
+                      <p className="text-xs text-[#9CA3AF]">Score global</p>
                     </div>
                     <div className="flex gap-2">
                       <Button asChild size="sm" variant="secondary">
-                        <Link href={`/feedback/${feedback.id}`}>
-                          Voir le rapport
-                        </Link>
+                        <Link href={`/feedback/${feedback.id}`}>Voir le rapport</Link>
                       </Button>
                       <Button size="sm" variant="secondary" className="px-3">
                         <Download className="h-4 w-4" />
@@ -113,17 +109,13 @@ export default function FeedbacksPage() {
       ) : (
         <BentoCard padding="lg">
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <FileText className="mb-4 h-16 w-16 text-slate-600" />
-            <h3 className="text-lg font-semibold text-slate-100 mb-2">
-              Aucun feedback pour le moment
-            </h3>
-            <p className="text-sm text-slate-400 mb-6 max-w-md">
+            <FileText className="mb-4 h-16 w-16 text-[#A5B4FC]" />
+            <h3 className="mb-2 text-lg font-semibold text-[#1F2432]">Aucun feedback pour le moment</h3>
+            <p className="mb-6 max-w-md text-sm text-[#4A4E5E]">
               Passez votre première interview pour recevoir un rapport détaillé avec analyse de vos performances.
             </p>
             <Button asChild size="lg">
-              <Link href="/interview/new">
-                Lancer ma première interview
-              </Link>
+              <Link href="/interview/new">Lancer ma première interview</Link>
             </Button>
           </div>
         </BentoCard>

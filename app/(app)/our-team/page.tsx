@@ -38,11 +38,10 @@ export default function TeamPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {team.map((member) => (
-          <BentoCard key={member.name} padding="lg" className="space-y-4 hover:border-emerald-400/40 transition-all">
-            {/* Photo de profil */}
+          <BentoCard key={member.name} padding="lg" className="space-y-4 transition-all hover:-translate-y-1">
             <div className="flex justify-center">
-              <div className="relative h-24 w-24 rounded-full overflow-hidden bg-slate-800 border-2 border-emerald-400/20">
-                <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-emerald-200">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-[#4F46E5]/30 bg-[#4F46E5]/5 text-[#4F46E5]">
+                <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
               </div>
@@ -50,12 +49,12 @@ export default function TeamPage() {
 
             {/* Nom et rôle */}
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-slate-100">{member.name}</h3>
-              <p className="text-sm text-emerald-200/70 mt-1">{member.role}</p>
+              <h3 className="text-lg font-semibold text-[#1F2432]">{member.name}</h3>
+              <p className="mt-1 text-sm text-[#4F46E5]">{member.role}</p>
             </div>
 
             {/* Bio */}
-            <p className="text-sm text-slate-300 text-center leading-relaxed">{member.bio}</p>
+            <p className="text-center text-sm leading-relaxed text-[#4A4E5E]">{member.bio}</p>
 
             {/* LinkedIn link */}
             <div className="flex justify-center pt-2">
@@ -63,7 +62,7 @@ export default function TeamPage() {
                 href={member.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-emerald-200 hover:text-emerald-100 transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-[#4F46E5] transition-colors hover:underline"
               >
                 <Linkedin className="h-4 w-4" />
                 Voir le profil LinkedIn
@@ -75,14 +74,14 @@ export default function TeamPage() {
 
       {/* Mission statement */}
       <BentoCard padding="lg" className="mt-8">
-        <div className="space-y-4 text-center max-w-3xl mx-auto">
-          <h3 className="text-xl font-semibold text-slate-100">Notre mission</h3>
-          <p className="text-slate-300 leading-relaxed">
+        <div className="mx-auto max-w-3xl space-y-4 text-center">
+          <h3 className="text-xl font-semibold text-[#1F2432]">Notre mission</h3>
+          <p className="leading-relaxed text-[#4A4E5E]">
             Nous avons créé FinanceBro pour démocratiser l'accès aux meilleures pratiques d'entretiens en finance. 
             Notre plateforme combine intelligence artificielle de pointe, simulation vidéo immersive et feedback personnalisé 
             pour transformer chaque candidat en un expert de l'entretien finance.
           </p>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#6B7280]">
             Rejoignez plus de 200 candidats qui ont déjà amélioré leurs performances grâce à FinanceBro.
           </p>
         </div>

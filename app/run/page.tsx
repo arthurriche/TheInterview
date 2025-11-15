@@ -16,21 +16,21 @@ export default function RunInterviewPage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
         <div className="space-y-6">
           <BentoCard padding="lg">
-            <h3 className="text-sm font-semibold text-slate-50">Brief sectoriel</h3>
-            <p className="mt-2 text-sm text-slate-300/80">
+            <h3 className="text-sm font-semibold text-[#1F2432]">Brief sectoriel</h3>
+            <p className="mt-2 text-sm text-[#4A4E5E]">
               Focus Market Finance — Sales &amp; Trading. Expect questions sur les flux Fixed Income,
               stress tests intraday, volatilité implicite et régulation MIFID II.
             </p>
           </BentoCard>
           <BentoCard padding="lg">
-            <h3 className="text-sm font-semibold text-slate-50">Fiches mnémotechniques</h3>
-            <ul className="mt-3 space-y-2 text-sm text-slate-200">
+            <h3 className="text-sm font-semibold text-[#1F2432]">Fiches mnémotechniques</h3>
+            <ul className="mt-3 space-y-2 text-sm text-[#4A4E5E]">
               {prepQuestions.map((question) => (
-                <li key={question.id} className="rounded-[var(--radius)] bg-white/5 p-3">
-                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">
+                <li key={question.id} className="rounded-[var(--radius)] border border-[#E3E6EC] bg-white p-3">
+                  <p className="text-xs uppercase tracking-[0.3em] text-[#4F46E5]">
                     {question.type} - {question.difficulty}
                   </p>
-                  <p className="mt-1 text-sm text-slate-100">{question.prompt}</p>
+                  <p className="mt-1 text-sm text-[#1F2432]">{question.prompt}</p>
                 </li>
               ))}
             </ul>

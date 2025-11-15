@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/app/PageHeader";
 import { ProfileForm } from "@/components/account/ProfileForm";
 import { CvManager } from "@/components/account/CvManager";
+import { StreaksCard } from "@/components/account/StreaksCard";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { getCurrentProfile, type ProfileRow } from "@/lib/supabase/profile";
 
@@ -62,7 +63,7 @@ export default function AccountPage() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-slate-400">Chargement du compte…</p>
+        <p className="text-sm text-[#6B7280]">Chargement du compte…</p>
       </div>
     );
   }
@@ -70,7 +71,7 @@ export default function AccountPage() {
   if (!userId || !profile) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[#6B7280]">
           Nous n&apos;avons pas pu récupérer ton compte. Réessaie plus tard.
         </p>
       </div>
@@ -83,6 +84,8 @@ export default function AccountPage() {
         title="Mon compte"
         subtitle="Gère tes informations personnelles et ton CV pour personnaliser tes sessions."
       />
+
+      <StreaksCard userId={userId} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <ProfileForm userId={userId} profile={profile} onProfileChange={handleProfileChange} />

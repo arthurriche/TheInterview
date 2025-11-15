@@ -175,8 +175,8 @@ export function SignUpWizard({ onSwitchTab }: SignUpWizardProps) {
   return (
     <form onSubmit={form.handleSubmit(handleSignUp)} className="grid gap-8">
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold text-white">Informations de base</h3>
-        <p className="text-sm text-slate-300/80">
+        <h3 className="text-xl font-semibold text-[#1F2432]">Informations de base</h3>
+        <p className="text-sm text-[#4A4E5E]">
           Ces informations personnalisent tes sessions. L&apos;email servira d&apos;identifiant.
         </p>
       </div>
@@ -189,10 +189,10 @@ export function SignUpWizard({ onSwitchTab }: SignUpWizardProps) {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
+          <div className="w-full border-t border-white/70" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-slate-950 px-2 text-slate-400">Ou continuer avec</span>
+          <span className="bg-white px-2 text-[#9CA3AF]">Ou continuer avec</span>
         </div>
       </div>
 
