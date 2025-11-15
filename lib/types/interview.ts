@@ -39,6 +39,13 @@ export interface QuestionFeedback {
   score: number; // 0-100
 }
 
+export interface CriteriaScores {
+  pertinence: number;
+  communication: number;
+  technique: number;
+  comportement: number;
+}
+
 export interface InterviewFeedback {
   id: string;
   session_id: string;
@@ -47,6 +54,8 @@ export interface InterviewFeedback {
   to_improve: string[];
   per_question: QuestionFeedback[];
   score_overall: number | null; // 0-100
+  criteria_scores?: CriteriaScores; // Scores détaillés par critère
+  recommendations?: string[]; // Recommandations pour progresser
   created_at: string;
 }
 

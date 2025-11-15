@@ -1,54 +1,33 @@
 'use client';
 
-import { useEffect, useMemo } from "react";
-import { Sparkles, Workflow, Timer, BarChart3 } from "lucide-react";
-import { HeroVideoPinned } from "@/components/marketing/HeroVideoPinned";
-import { Chapter } from "@/components/marketing/Chapter";
-import { TeamSection } from "@/components/marketing/TeamSection";
-import { PricingSection } from "@/components/marketing/PricingSection";
-import { ContactSection } from "@/components/marketing/ContactSection";
-import { FinalCTA } from "@/components/marketing/FinalCTA";
-import { NAV_SECTIONS, type NavbarTheme } from "@/components/marketing/NavbarPublic";
-import { useSectionObserver } from "@/lib/scroll/useSectionObserver";
-import { PageScroller } from "./PageScroller";
-import { FullPageSection } from "./FullPageSection";
-import { DotsNav } from "./DotsNav";
-import { m, useReducedMotion } from "framer-motion";
-
-const SECTION_THEME_MAP: Record<string, NavbarTheme> = {
-  hero: "dark",
-  story: "light",
-  value: "dark",
-  team: "light",
-  pricing: "dark",
-  contact: "light",
-  cta: "dark"
-};
-
-const CHAPTERS = NAV_SECTIONS.map((section) => ({
-  ...section,
-  theme: SECTION_THEME_MAP[section.id] ?? ("dark" as NavbarTheme)
-}));
+import { Sparkles, Workflow, Timer, BarChart3 } from 'lucide-react';
+import { m, useReducedMotion } from 'framer-motion';
+import { HeroNeumorphic } from '@/components/neumorphic-marketing/HeroNeumorphic';
+import { NeuSection } from '@/components/neumorphic/NeuSection';
+import { NeuIconCard } from '@/components/neumorphic/NeuIconCard';
+import { ContactSectionNeumorphic } from '@/components/neumorphic-marketing/ContactSectionNeumorphic';
+import { FinalCTANeumorphic } from '@/components/neumorphic-marketing/FinalCTANeumorphic';
+import { NeuCard } from '@/components/neumorphic/NeuCard';
 
 const STORY_STEPS = [
   {
     title: "1. Se connecter",
     description:
       "Choisis ton secteur, rôle et niveau. FinanceBro récupère ton historique pour calibrer la simulation.",
-    icon: Workflow
+    icon: Workflow,
   },
   {
-    title: "2. Passer l’entretien IA",
+    title: "2. Passer l'entretien IA",
     description:
       "Avatar vidéo Beyond Presence, questions adaptatives, relances, analyse non verbale. Tout est capturé en temps réel.",
-    icon: Timer
+    icon: Timer,
   },
   {
     title: "3. Recevoir le rapport",
     description:
       "Rapport structuré avec scoring multi-axes, plan d'entraînement priorisé et benchmarks candidats IB/PE.",
-    icon: BarChart3
-  }
+    icon: BarChart3,
+  },
 ];
 
 const VALUE_PROPS = [
@@ -56,152 +35,232 @@ const VALUE_PROPS = [
     title: "Simulation haut-fidélité",
     description:
       "Scénarios calibrés sur les trames bancaires, tempo réaliste, signaux non verbaux analysés en direct.",
-    icon: Sparkles
+    icon: Sparkles,
   },
   {
     title: "Feedback actionnable",
     description:
-      "9 axes scorés, recommandations lisibles, plan d’entrainement 7 jours, exports PDF et partage coach.",
-    icon: BarChart3
+      "9 axes scorés, recommandations lisibles, plan d'entraînement 7 jours, exports PDF et partage coach.",
+    icon: BarChart3,
   },
   {
     title: "Benchmarks finance",
     description:
       "Comparaison vs analystes et associates, grille de réponses attendues par banque ou fonds.",
-    icon: Workflow
+    icon: Workflow,
   },
   {
     title: "Analyse instantanée",
     description:
       "Transcription, filler words, latence, tonalité : chaque session est disséquée pour accélérer tes progrès.",
-    icon: Timer
-  }
+    icon: Timer,
+  },
 ];
 
-export default function PublicLandingPage() {
+const PRICING_PLANS = [
+  {
+    name: "Starter",
+    price: "29€",
+    period: "/mois",
+    description: "Pour tester et démarrer ta préparation",
+    features: [
+      "3 sessions d'interview par mois",
+      "Rapport détaillé après chaque session",
+      "Accès aux scénarios finance de base",
+      "Support email sous 48h",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "79€",
+    period: "/mois",
+    description: "Pour une préparation intensive",
+    features: [
+      "10 sessions d'interview par mois",
+      "Rapports détaillés + plan d'entraînement",
+      "Accès à tous les scénarios (IB, PE, M&A)",
+      "Benchmarks candidats par banque",
+      "Support prioritaire sous 24h",
+      "Partage avec coach externe",
+    ],
+    highlighted: true,
+  },
+  {
+    name: "Elite",
+    price: "149€",
+    period: "/mois",
+    description: "Pour maximiser tes chances d'offre",
+    features: [
+      "Sessions illimitées",
+      "Coaching IA personnalisé",
+      "Tous scénarios + scénarios sur-mesure",
+      "Benchmarks détaillés par rôle/banque",
+      "Support dédié 7j/7",
+      "Partage illimité",
+      "Appel avec un ex-financier (1h/mois)",
+    ],
+  },
+];
+
+export default function NeumorphicLandingPage() {
   const shouldReduceMotion = useReducedMotion();
-  const sectionIds = useMemo(() => CHAPTERS.map((chapter) => chapter.id), []);
-  const { activeId } = useSectionObserver(sectionIds);
-  const activeTheme = useMemo<NavbarTheme>(
-    () => (activeId ? SECTION_THEME_MAP[activeId] ?? "dark" : "dark"),
-    [activeId]
-  );
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const detail = { id: activeId ?? CHAPTERS[0]?.id ?? "hero", theme: activeTheme };
-    window.dispatchEvent(new CustomEvent("chapter-change", { detail }));
-    document.body.dataset.navTheme = activeTheme;
-    document.body.dataset.activeChapter = activeId ?? "";
-  }, [activeId, activeTheme]);
 
   return (
-    <main className="relative h-[100dvh]">
-      <DotsNav sections={CHAPTERS} activeId={activeId} />
-      <PageScroller>
-        <FullPageSection id="hero" theme="dark" contentClassName="max-w-none px-0 md:px-0 xl:px-0 py-0 h-full">
-          <HeroVideoPinned ctaHref="/auth/sign-in" />
-        </FullPageSection>
+    <main className="relative min-h-screen bg-[#EEEFF3]">
+      <HeroNeumorphic ctaHref="/auth/sign-in" />
 
-        <FullPageSection id="story" theme="light">
-          <Chapter
-            eyebrow="Comment ça marche"
-            title="Ton parcours de préparation, de la connexion au rapport détaillé"
-            description="FinanceBro coreographie ton entrainement avec un pipeline IA complet : onboarding, simulation, analyse et recommandations personnalisées."
-            variant="light"
-          >
-            <div className="grid gap-8 md:grid-cols-3">
-              {STORY_STEPS.map((step, index) => (
-                <m.div
-                  key={step.title}
-                  initial={shouldReduceMotion ? undefined : { opacity: 0.4, y: 24 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={
-                    shouldReduceMotion ? undefined : { duration: 0.24, delay: index * 0.08, ease: "easeOut" }
-                  }
-                  className="flex flex-col gap-4"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#0a0f1f] text-[#0a0f1f]">
-                    <step.icon className="h-6 w-6" aria-hidden="true" />
+      <NeuSection
+        id="story"
+        eyebrow="Comment ça marche"
+        title="Ton parcours de préparation, de la connexion au rapport détaillé"
+        description="FinanceBro chorégraphie ton entraînement avec un pipeline IA complet : onboarding, simulation, analyse et recommandations personnalisées."
+        centered
+        maxWidth="xl"
+      >
+        <div className="grid gap-8 md:grid-cols-3">
+          {STORY_STEPS.map((step, index) => (
+            <m.div
+              key={step.title}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 24 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={
+                shouldReduceMotion
+                  ? undefined
+                  : { duration: 0.5, delay: index * 0.1, ease: "easeOut" }
+              }
+            >
+              <NeuIconCard
+                icon={step.icon}
+                title={step.title}
+                description={step.description}
+              />
+            </m.div>
+          ))}
+        </div>
+      </NeuSection>
+
+      <NeuSection
+        id="value"
+        eyebrow="Pourquoi FinanceBro"
+        title="Une orchestration complète pour dominer tes entretiens finance"
+        description="Nous combinons avatar vidéo, IA en temps réel et benchmarks métiers pour transformer chaque répétition en avantage compétitif."
+        centered
+        maxWidth="xl"
+        className="bg-gradient-to-b from-[#EEEFF3] to-[#E3E6EC]"
+      >
+        <div className="grid gap-8 md:grid-cols-2">
+          {VALUE_PROPS.map((item, index) => (
+            <m.div
+              key={item.title}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 24 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={
+                shouldReduceMotion
+                  ? undefined
+                  : { duration: 0.5, delay: index * 0.1, ease: "easeOut" }
+              }
+            >
+              <NeuIconCard
+                icon={item.icon}
+                title={item.title}
+                description={item.description}
+              />
+            </m.div>
+          ))}
+        </div>
+      </NeuSection>
+
+      <NeuSection
+        id="pricing"
+        eyebrow="Plans"
+        title="Choisis un plan aligné sur ton objectif recrutement"
+        description="Sans engagement. Pause possible entre deux saisons. Upgrade instantané pour débloquer plus de sessions et coaching."
+        centered
+        maxWidth="xl"
+        className="bg-gradient-to-b from-[#E3E6EC] to-[#EEEFF3]"
+      >
+        <div className="grid gap-8 md:grid-cols-3">
+          {PRICING_PLANS.map((plan, index) => (
+            <m.div
+              key={plan.name}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 24 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={
+                shouldReduceMotion
+                  ? undefined
+                  : { duration: 0.5, delay: index * 0.1, ease: "easeOut" }
+              }
+              className="relative"
+            >
+              {plan.highlighted && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="rounded-full bg-[#4F46E5] px-4 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-[4px_4px_8px_#D1D4D9,-4px_-4px_8px_#FFFFFF]">
+                    Populaire
                   </span>
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-[#0a0f1f]">{step.title}</h3>
-                    <p className="text-sm text-[#0a0f1f]/80">{step.description}</p>
+                </div>
+              )}
+              <NeuCard
+                shadowVariant={plan.highlighted ? "strong" : "medium"}
+                radiusSize="lg"
+                hoverEffect
+                className={`p-8 ${plan.highlighted ? "ring-2 ring-[#4F46E5]/20" : ""}`}
+              >
+                <div className="mb-6 text-center">
+                  <h3 className="mb-2 text-2xl font-bold text-[#2A2D3A]">
+                    {plan.name}
+                  </h3>
+                  <div className="mb-2 flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-[#2A2D3A]">
+                      {plan.price}
+                    </span>
+                    <span className="text-sm text-[#6B7280]">
+                      {plan.period}
+                    </span>
                   </div>
-                </m.div>
-              ))}
-            </div>
-          </Chapter>
-        </FullPageSection>
+                  <p className="text-sm text-[#6B7280]">{plan.description}</p>
+                </div>
 
-        <FullPageSection id="value" theme="dark" backgroundVideoSrc="/videos/video-interview2.mp4" backgroundVideoPlaybackRate={0.9}>
-          <Chapter
-            eyebrow="Pourquoi FinanceBro"
-            title="Une orchestration complète pour dominer tes entretiens finance"
-            description="Nous combinons avatar vidéo, IA en temps réel et benchmarks métiers pour transformer chaque répétition en avantage compétitif."
-          >
-            <div className="grid gap-8 md:grid-cols-2">
-              {VALUE_PROPS.map((item, index) => (
-                <m.div
-                  key={item.title}
-                  initial={shouldReduceMotion ? undefined : { opacity: 0.4, y: 24 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={
-                    shouldReduceMotion ? undefined : { duration: 0.24, delay: index * 0.08, ease: "easeOut" }
-                  }
-                  className="flex flex-col gap-3"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white text-white">
-                    <item.icon className="h-6 w-6" aria-hidden="true" />
-                  </span>
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="text-sm text-white/80">{item.description}</p>
-                </m.div>
-              ))}
-            </div>
-          </Chapter>
-        </FullPageSection>
+                <ul className="mb-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-sm text-[#2A2D3A]"
+                    >
+                      <span className="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[#4F46E5]/10 text-[#4F46E5]">
+                        ✓
+                      </span>
+                      <span className="leading-relaxed">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </NeuCard>
+            </m.div>
+          ))}
+        </div>
+      </NeuSection>
 
-        <FullPageSection id="team" theme="light">
-          <Chapter
-            eyebrow="Équipe"
-            title="Trois ex-financiers devenus coachs IA"
-            description="Christopher, Arthur et Arthur ont accompagné plus de 200 candidats en IB, M&A et PE. FinanceBro capture cette expertise terrain."
-            variant="light"
-          >
-            <TeamSection />
-          </Chapter>
-        </FullPageSection>
+      <NeuSection
+        id="contact"
+        eyebrow="Contact"
+        title="Besoin d'une démo pour ton équipe carrière ou ton asso finance ?"
+        description="Raconte-nous ton contexte : stage, full-time, M&A, marchés, buy-side. On répond sous 24h avec un plan de déploiement."
+        centered
+        maxWidth="lg"
+      >
+        <ContactSectionNeumorphic />
+      </NeuSection>
 
-        <FullPageSection id="pricing" theme="dark">
-          <Chapter
-            eyebrow="Plans"
-            title="Choisis un plan aligné sur ton objectif recrutement"
-            description="Sans engagement. Pause possible entre deux saisons. Upgrade instantané pour débloquer plus de sessions et coaching."
-          >
-            <PricingSection />
-          </Chapter>
-        </FullPageSection>
-
-        <FullPageSection id="contact" theme="light" contentClassName="max-w-4xl">
-          <Chapter
-            eyebrow="Contact"
-            title="Besoin d’une démo pour ton équipe carrière ou ton asso finance ?"
-            description="Raconte-nous ton contexte : stage, full-time, M&A, marchés, buy-side. On répond sous 24h avec un plan de déploiement."
-            variant="light"
-          >
-            <ContactSection />
-          </Chapter>
-        </FullPageSection>
-
-        <FullPageSection id="cta" theme="dark" contentClassName="max-w-4xl">
-          <FinalCTA ctaHref="/auth/sign-in" />
-        </FullPageSection>
-      </PageScroller>
+      <NeuSection
+        id="cta"
+        centered
+        maxWidth="lg"
+        className="bg-gradient-to-b from-[#EEEFF3] to-[#E3E6EC]"
+      >
+        <FinalCTANeumorphic ctaHref="/auth/sign-in" />
+      </NeuSection>
     </main>
   );
 }
-

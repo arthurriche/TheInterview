@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Home, TrendingUp, TrendingDown, CheckCircle2, AlertCircle } from "lucide-react";
+import { Download, Home, TrendingUp, TrendingDown, CheckCircle2, AlertCircle, BarChart3, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BentoCard } from "@/components/ui/bento-card";
@@ -143,6 +143,158 @@ export function FeedbackView({ feedback, sessionTitle, company, role, date }: Fe
           </BentoCard>
         )}
       </div>
+
+      {/* Scores détaillés par critère */}
+      {feedback.criteria_scores && (
+        <BentoCard padding="lg" className="print:border print:border-gray-300">
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="h-5 w-5 text-blue-400 print:text-blue-600" />
+            <h2 className="text-lg font-semibold text-slate-100 print:text-black">
+              Analyse détaillée par critère
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Pertinence des réponses */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-200 print:text-gray-800">
+                  Pertinence des réponses
+                </span>
+                <span className={cn(
+                  "text-lg font-bold tabular-nums",
+                  getScoreColor(feedback.criteria_scores.pertinence),
+                  "print:text-black"
+                )}>
+                  {Math.round(feedback.criteria_scores.pertinence)}/100
+                </span>
+              </div>
+              <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden print:bg-gray-200">
+                <div
+                  className={cn(
+                    "h-full transition-all",
+                    feedback.criteria_scores.pertinence >= 80 ? "bg-emerald-400" :
+                    feedback.criteria_scores.pertinence >= 60 ? "bg-yellow-400" : "bg-rose-400"
+                  )}
+                  style={{ width: `${feedback.criteria_scores.pertinence}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-400 print:text-gray-600">
+                Profondeur technique, précision, exemples concrets
+              </p>
+            </div>
+
+            {/* Qualité orale */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-200 print:text-gray-800">
+                  Qualité orale
+                </span>
+                <span className={cn(
+                  "text-lg font-bold tabular-nums",
+                  getScoreColor(feedback.criteria_scores.communication),
+                  "print:text-black"
+                )}>
+                  {Math.round(feedback.criteria_scores.communication)}/100
+                </span>
+              </div>
+              <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden print:bg-gray-200">
+                <div
+                  className={cn(
+                    "h-full transition-all",
+                    feedback.criteria_scores.communication >= 80 ? "bg-emerald-400" :
+                    feedback.criteria_scores.communication >= 60 ? "bg-yellow-400" : "bg-rose-400"
+                  )}
+                  style={{ width: `${feedback.criteria_scores.communication}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-400 print:text-gray-600">
+                Clarté, structure, concision, confiance
+              </p>
+            </div>
+
+            {/* Compétences techniques */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-200 print:text-gray-800">
+                  Compétences techniques
+                </span>
+                <span className={cn(
+                  "text-lg font-bold tabular-nums",
+                  getScoreColor(feedback.criteria_scores.technique),
+                  "print:text-black"
+                )}>
+                  {Math.round(feedback.criteria_scores.technique)}/100
+                </span>
+              </div>
+              <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden print:bg-gray-200">
+                <div
+                  className={cn(
+                    "h-full transition-all",
+                    feedback.criteria_scores.technique >= 80 ? "bg-emerald-400" :
+                    feedback.criteria_scores.technique >= 60 ? "bg-yellow-400" : "bg-rose-400"
+                  )}
+                  style={{ width: `${feedback.criteria_scores.technique}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-400 print:text-gray-600">
+                Valorisation, analyse financière, marchés
+              </p>
+            </div>
+
+            {/* Comportement */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-200 print:text-gray-800">
+                  Comportement & soft skills
+                </span>
+                <span className={cn(
+                  "text-lg font-bold tabular-nums",
+                  getScoreColor(feedback.criteria_scores.comportement),
+                  "print:text-black"
+                )}>
+                  {Math.round(feedback.criteria_scores.comportement)}/100
+                </span>
+              </div>
+              <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden print:bg-gray-200">
+                <div
+                  className={cn(
+                    "h-full transition-all",
+                    feedback.criteria_scores.comportement >= 80 ? "bg-emerald-400" :
+                    feedback.criteria_scores.comportement >= 60 ? "bg-yellow-400" : "bg-rose-400"
+                  )}
+                  style={{ width: `${feedback.criteria_scores.comportement}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-400 print:text-gray-600">
+                Professionnalisme, écoute, gestion du stress
+              </p>
+            </div>
+          </div>
+        </BentoCard>
+      )}
+
+      {/* Recommandations */}
+      {feedback.recommendations && feedback.recommendations.length > 0 && (
+        <BentoCard padding="lg" className="print:border print:border-gray-300">
+          <div className="flex items-center gap-2 mb-4">
+            <Lightbulb className="h-5 w-5 text-amber-400 print:text-amber-600" />
+            <h2 className="text-lg font-semibold text-slate-100 print:text-black">
+              Recommandations pour progresser
+            </h2>
+          </div>
+          <ul className="space-y-3">
+            {feedback.recommendations.map((rec, idx) => (
+              <li key={idx} className="flex items-start gap-3 text-sm">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-xs font-medium text-amber-300 print:bg-amber-100 print:text-amber-800">
+                  {idx + 1}
+                </span>
+                <span className="text-slate-300 flex-1 print:text-gray-800">{rec}</span>
+              </li>
+            ))}
+          </ul>
+        </BentoCard>
+      )}
 
       {/* Analyse par question */}
       {feedback.per_question && feedback.per_question.length > 0 && (
