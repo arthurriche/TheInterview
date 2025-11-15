@@ -31,6 +31,7 @@ export interface CoachHooks {
 export interface SessionContext {
   id: string;
   transcript: Turn[];
+  awaitingUserTurn?: boolean;
 }
 
 export class BaseCoachService {
@@ -51,7 +52,7 @@ export class BaseCoachService {
   ) {
     this.cfg = cfg;
     this.hooks = hooks;
-    this.ctx = { id: sessionId, transcript: [] };
+    this.ctx = { id: sessionId, transcript: [], awaitingUserTurn: false };
     this.feedback = feedbackStrategy ?? new BaseFeedbackService();
 
     this.realtime = new RealtimeAPIService(apiKey, {
@@ -63,16 +64,56 @@ export class BaseCoachService {
     });
   }
 
-  protected requestResponseCreation(): void {
+  protected getLastUserTurn(): Turn | undefined {
+    for (let i = this.ctx.transcript.length - 1; i >= 0; i -= 1) {
+      if (this.ctx.transcript[i].role === "user") {
+        return this.ctx.transcript[i];
+      }
+    }
+    return undefined;
+  }
+
+  protected buildResponseInstructions(): string {
+    const lastUser = this.getLastUserTurn();
+
+    if (!lastUser) {
+      return (
+        this.cfg.greeting ??
+        "Greet the candidate, state that this is a mock interview, and ask the very first question. Ask only one question and end your response with a prompt inviting them to answer."
+      );
+    }
+
+    const sanitizedAnswer = lastUser.text.replace(/\s+/g, " ").trim().slice(0, 600);
+
+    return [
+      `You are still the interviewer 'Atlas'. The candidate just answered: "${sanitizedAnswer}".`,
+      "Acknowledge or challenge their answer in at most two sentences, then ask exactly one new follow-up question.",
+      "Do not offer sample answers or continue speaking after the question. Explicitly say you're waiting for their response."
+    ].join(" ");
+  }
+
+  protected requestResponseCreation(force = false): void {
+    if (!force && this.ctx.awaitingUserTurn) {
+      return;
+    }
+
     if (this.isResponseInProgress) {
       this.hasPendingResponseRequest = true;
       return;
     }
 
     this.hasPendingResponseRequest = false;
+    this.ctx.awaitingUserTurn = true;
+
+    const instructions = this.buildResponseInstructions();
 
     try {
-      this.realtime.send({ type: "response.create" });
+      this.realtime.send({
+        type: "response.create",
+        response: {
+          instructions
+        }
+      });
     } catch (err) {
       console.error("BaseCoachService response.create error:", err);
     }
@@ -86,7 +127,7 @@ export class BaseCoachService {
     };
   }
 
-  async start(): Promise<void> {
+  async start(options?: { delayGreeting?: boolean }): Promise<void> {
     await this.realtime.connect();
 
     this.realtime.onMessage(async (message) => {
@@ -112,7 +153,18 @@ export class BaseCoachService {
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    this.requestResponseCreation();
+    // Only send greeting immediately if not delayed
+    if (!options?.delayGreeting) {
+      this.requestResponseCreation(true);
+    } else {
+      console.log("⏸️ Greeting delayed - waiting for avatar connection");
+    }
+  }
+
+  // Method to trigger greeting manually after avatar is ready
+  triggerGreeting(): void {
+    console.log("▶️ Triggering greeting now that avatar is ready");
+    this.requestResponseCreation(true);
   }
 
   protected async ensureRealtimeConnection(): Promise<void> {
@@ -128,6 +180,7 @@ export class BaseCoachService {
     if (!audioBase64) return;
 
     try {
+      this.ctx.awaitingUserTurn = false;
       await this.ensureRealtimeConnection();
       this.realtime.sendAudio(audioBase64);
     } catch (err) {
@@ -149,6 +202,7 @@ export class BaseCoachService {
 
   async sendUserText(text: string): Promise<void> {
     this.pushUser(text);
+    this.ctx.awaitingUserTurn = false;
     await this.hooks.onUserText?.(text, this.ctx);
     try {
       await this.ensureRealtimeConnection();
@@ -188,6 +242,7 @@ export class BaseCoachService {
   }
 
   protected pushUser(text: string) {
+    this.ctx.awaitingUserTurn = false;
     this.ctx.transcript.push({
       role: "user",
       text,
@@ -196,6 +251,7 @@ export class BaseCoachService {
   }
 
   protected pushCoach(text: string) {
+    this.ctx.awaitingUserTurn = true;
     this.ctx.transcript.push({
       role: "coach",
       text,

@@ -26,10 +26,10 @@ interface QuestionFeedback {
 }
 
 interface CriteriaScores {
-  pertinence: number;
+  architecture: number;
+  ai_engineering: number;
+  problem_solving: number;
   communication: number;
-  technique: number;
-  comportement: number;
 }
 
 interface FeedbackAnalysis {
@@ -97,10 +97,10 @@ export async function POST(request: Request) {
         to_improve: ["Configuration requise pour l'analyse détaillée"],
         per_question: [],
         criteria_scores: {
-          pertinence: 50,
-          communication: 50,
-          technique: 50,
-          comportement: 50
+          architecture: 50,
+          ai_engineering: 50,
+          problem_solving: 50,
+          communication: 50
         },
         recommendations: ["Configurer la clé OpenAI pour obtenir un feedback détaillé"]
       };

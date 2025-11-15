@@ -33,7 +33,7 @@ Copiez `.env.example` vers `.env.local` et remplissez :
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` *(server-only)*
 - `OPENAI_API_KEY`
-- `BEYOND_PRESENCE_API_KEY`
+- `BEY_API_KEY` *(ou `BEYOND_PRESENCE_API_KEY`, les deux noms sont supportés)*
 - `BEYOND_PRESENCE_API_BASE` *(optionnel, défaut = API Beyond Presence officielle)*
 - `BEYOND_PRESENCE_ROOM_PREFIX` *(optionnel, défaut `financebro-bey`)*
 - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `LIVEKIT_REST_URL`
@@ -42,7 +42,7 @@ Copiez `.env.example` vers `.env.local` et remplissez :
 - `NEXT_PUBLIC_ENABLE_AUTH_MOCK` *(optionnel : `true` pour simuler une session en développement si Supabase n'est pas configuré)*
 
 ### Caméra & avatar : checklist rapide
-1. **Préparer les secrets** — `cp .env.example .env.local`, remplissez les clés Supabase, OpenAI, LiveKit (URL/API key/secret/REST) et Beyond Presence (`BEYOND_PRESENCE_API_KEY`, `BEY_AVATAR_ID`).
+1. **Préparer les secrets** — `cp .env.example .env.local`, remplissez les clés Supabase, OpenAI, LiveKit (URL/API key/secret/REST) et Beyond Presence (`BEY_API_KEY` ou `BEYOND_PRESENCE_API_KEY`, ainsi que `BEY_AVATAR_ID`).
 2. **Lancer Next.js** — `npm run dev` puis ouvrez `https://localhost:3000` (ou `http://localhost`, seul hôte non HTTPS autorisé par les navigateurs pour la caméra). La prévisualisation auto demandera l’accès micro/caméra; le badge « Caméra » doit passer à `active`.
 3. **Démarrer le worker avatar** — dans un nouveau terminal, `node agents/livekit-agent.mjs`. Le script charge automatiquement `.env.local`/`.env` et dispatch l’agent `LIVEKIT_AGENT_NAME` sur la room.
 4. **Vérifier les statuts** — sur `/run`, assurez-vous que les indicateurs « Micro », « Caméra » et « Avatar » sont verts, et que la vignette caméra affiche votre flux. En cas d’erreur :

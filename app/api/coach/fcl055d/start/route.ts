@@ -4,8 +4,9 @@ import { createFcl055dSession } from "@/lib/coach/session-registry";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const { sessionId } = (await request.json().catch(() => ({}))) as {
+  const { sessionId, delayGreeting } = (await request.json().catch(() => ({}))) as {
     sessionId?: string;
+    delayGreeting?: boolean;
   };
 
   if (!sessionId) {
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
 
     const { entry, created } = createFcl055dSession(apiKey, sessionId);
     if (created) {
-      await entry.service.start();
+      await entry.service.start({ delayGreeting: delayGreeting ?? true });
     }
 
     const audioProcessing = entry.service.getAudioProcessingConfig();

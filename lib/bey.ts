@@ -13,6 +13,11 @@ import type {
 
 const DEFAULT_ROOM_PREFIX = process.env.BEYOND_PRESENCE_ROOM_PREFIX ?? "financebro-bey";
 const DEFAULT_AGENT_NAME = process.env.LIVEKIT_AGENT_NAME ?? "finance-coach-avatar";
+const BEY_KEYS = [
+  process.env.BEY_API_KEY,
+  process.env.BEYOND_PRESENCE_API_KEY,
+  process.env.BEYOND_PRESENCE_API_KEY?.length ? process.env.BEYOND_PRESENCE_API_KEY : undefined
+].filter(Boolean) as string[];
 
 function resolveSessionId(candidate?: string): string {
   if (candidate && typeof candidate === "string" && candidate.trim().length > 0) {
@@ -22,7 +27,7 @@ function resolveSessionId(candidate?: string): string {
 }
 
 export async function isBeyondPresenceReady(): Promise<boolean> {
-  const hasApiKey = Boolean(process.env.BEYOND_PRESENCE_API_KEY);
+  const hasApiKey = BEY_KEYS.length > 0;
   const livekitReady = await isLiveKitConfigured();
   return hasApiKey && livekitReady;
 }

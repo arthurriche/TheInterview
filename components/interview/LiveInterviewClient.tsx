@@ -84,6 +84,13 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
           strengths?: string[];
           improvements?: string[];
           recommendations?: string[];
+          score_overall?: number;
+          per_question?: Array<{
+            question?: string;
+            summary?: string;
+            tips?: string[];
+            score?: number;
+          }>;
         } | null;
 
         const generalSummary =
@@ -106,6 +113,31 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
                 "Préparer des questions plus approfondies"
               ];
 
+        const computedScore =
+          typeof structuredFeedback?.score_overall === "number"
+            ? structuredFeedback.score_overall
+            : 70 + Math.random() * 20;
+
+        const perQuestionEntries =
+          structuredFeedback?.per_question && structuredFeedback.per_question.length > 0
+            ? structuredFeedback.per_question.map((entry, idx) => ({
+                question: entry.question ?? questions[idx]?.text ?? `Question ${idx + 1}`,
+                summary: entry.summary ?? "Réponse enregistrée.",
+                tips:
+                  entry.tips && entry.tips.length > 0
+                    ? entry.tips
+                    : ["Préciser les métriques clés", "Décrire les effets sur l'utilisateur final"],
+                score: typeof entry.score === "number" ? entry.score : 60 + Math.random() * 20
+              }))
+            : questions
+                .filter((q) => q.asked)
+                .map((q) => ({
+                  question: q.text,
+                  summary: "Réponse complète et pertinente.",
+                  tips: ["Ajouter plus de détails quantifiés", "Utiliser la méthode STAR"],
+                  score: 70 + Math.random() * 20
+                }));
+
         const { error: feedbackError } = await supabase
           .from("interview_feedback")
           .insert({
@@ -113,15 +145,8 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
             general: generalSummary,
             went_well: strengths,
             to_improve: improvements,
-            per_question: questions
-              .filter((q) => q.asked)
-              .map((q) => ({
-                question: q.text,
-                summary: "Réponse complète et pertinente.",
-                tips: ["Ajouter plus de détails quantifiés", "Utiliser la méthode STAR"],
-                score: 70 + Math.random() * 20
-              })),
-            score_overall: 78
+            per_question: perQuestionEntries,
+            score_overall: computedScore
           });
 
         if (feedbackError) throw feedbackError;

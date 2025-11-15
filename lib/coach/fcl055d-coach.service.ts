@@ -47,6 +47,7 @@ class Fcl055dHooks implements CoachHooks {
   ): void {
     const sequence = ++this.sequenceCounter;
     ctx.transcript.push({ role, text, timestamp, sequence } as any);
+    ctx.awaitingUserTurn = role === "coach";
     console.log(`📝 Added ${role} transcript (seq: ${sequence}):`, text);
     this.sortTranscriptBySequence(ctx);
   }
@@ -179,7 +180,7 @@ export class Fcl055dCoachService extends BaseCoachService {
       role: "voice-coach",
       systemPrompt: fcl055dCoachPrompt,
       greeting:
-        "Let's dive into your finance background. Start by walking me through a recent deal, trade, or portfolio decision you're proud of—highlight the rationale, data you used, and the outcome.",
+        "Let's jump into your tech background. Walk me through a recent system or AI product you shipped—highlight the architecture decisions, the toughest trade-offs, and how you measured success.",
       model: "gpt-4o-realtime-preview-2024-10-01",
       voice: "alloy",
       temperature: 0.6,

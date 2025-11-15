@@ -12,6 +12,15 @@ type CoachFeedback = {
   strengths?: string[];
   improvements?: string[];
   recommendations?: string[];
+  score_overall?: number;
+  criteria?: Record<string, number>;
+  per_question?: Array<{
+    question?: string;
+    summary?: string;
+    insight?: string;
+    tips?: string[];
+    score?: number;
+  }>;
   raw?: string;
 } | null;
 
@@ -23,7 +32,8 @@ export function RealtimeSession() {
 
   const coachOptions = useMemo(
     () => ({
-      sessionId: previewSessionId ?? undefined
+      sessionId: previewSessionId ?? undefined,
+      // NOTE: Keep OpenAI frontend for greeting and transcript, but avatar handles audio
     }),
     [previewSessionId]
   );
@@ -62,6 +72,18 @@ export function RealtimeSession() {
   const avatarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const micPreviewStreamRef = useRef<MediaStream | null>(null);
   const autoPreviewLockRef = useRef(false);
+  const avatarStatusRef = useRef<
+    "idle" | "connecting" | "connected" | "stub" | "error"
+  >(avatarStatus);
+  const beyondPresenceSessionRef = useRef<BeyondPresenceSessionResponse | null>(null);
+
+  useEffect(() => {
+    avatarStatusRef.current = avatarStatus;
+  }, [avatarStatus]);
+
+  useEffect(() => {
+    beyondPresenceSessionRef.current = beyondPresenceSession;
+  }, [beyondPresenceSession]);
   const syncCameraElement = useCallback((stream: MediaStream | null) => {
     const element = selfVideoRef.current;
     if (!element) return;
@@ -476,6 +498,35 @@ export function RealtimeSession() {
       });
   }, [previewStatus, startPreview, status]);
 
+  const waitForAvatarReady = useCallback(async (timeoutMs = 20000) => {
+    const currentSession = beyondPresenceSessionRef.current;
+    if (!currentSession || currentSession.stub || !currentSession.livekit) {
+      return true;
+    }
+
+    const currentStatus = avatarStatusRef.current;
+    if (currentStatus === "connected") {
+      return true;
+    }
+    if (currentStatus === "error") {
+      return false;
+    }
+
+    return await new Promise<boolean>((resolve) => {
+      const deadline = Date.now() + timeoutMs;
+      const interval = setInterval(() => {
+        const status = avatarStatusRef.current;
+        if (status === "connected") {
+          clearInterval(interval);
+          resolve(true);
+        } else if (status === "error" || Date.now() >= deadline) {
+          clearInterval(interval);
+          resolve(false);
+        }
+      }, 250);
+    });
+  }, []);
+
   const startInterview = useCallback(async () => {
     if (status === "connecting" || status === "running") {
       return;
@@ -500,6 +551,16 @@ export function RealtimeSession() {
         setAvatarStatus("connecting");
       }
 
+      const avatarReady = await waitForAvatarReady();
+      if (!avatarReady) {
+        const description =
+          "Avatar Beyond Presence non connecté. Vérifiez que le worker est en ligne avant de démarrer.";
+        toast.error("Avatar indisponible", { description });
+        setAvatarStatus("error");
+        setAvatarError(description);
+        return;
+      }
+
       const coachResult = await startCoachSession();
 
       if (!coachResult.ok) {
@@ -508,6 +569,19 @@ export function RealtimeSession() {
 
       if (!previewSessionId && coachResult.sessionId) {
         setPreviewSessionId(coachResult.sessionId);
+      }
+
+      // Trigger the greeting now that avatar is connected
+      const triggerGreetingResponse = await fetch("/api/coach/fcl055d/trigger-greeting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: coachResult.sessionId ?? previewSessionId })
+      });
+
+      if (!triggerGreetingResponse.ok) {
+        console.warn("Failed to trigger greeting, but continuing anyway");
+      } else {
+        console.log("✅ Greeting triggered - OpenAI will generate audio, avatar should speak via LiveKit");
       }
 
       setMicStatus("ready");
@@ -531,7 +605,8 @@ export function RealtimeSession() {
     startCoachSession,
     startPreview,
     status,
-    stopMicPreview
+    stopMicPreview,
+    waitForAvatarReady
   ]);
 
   const finalizeSession = useCallback(async () => {
@@ -638,6 +713,25 @@ export function RealtimeSession() {
             }
           });
         });
+
+        // CRITICAL: Publish microphone audio to LiveKit so the agent can hear the candidate
+        if (micPreviewStreamRef.current) {
+          try {
+            const audioTracks = micPreviewStreamRef.current.getAudioTracks();
+            if (audioTracks.length > 0) {
+              const audioTrack = audioTracks[0];
+              if (audioTrack) {
+                await room.localParticipant.publishTrack(audioTrack, {
+                  name: "candidate-microphone",
+                  source: livekit.Track.Source.Microphone
+                });
+                console.log("✅ Microphone audio published to LiveKit - agent can now hear candidate");
+              }
+            }
+          } catch (error) {
+            console.error("Failed to publish microphone to LiveKit:", error);
+          }
+        }
 
         if (!livekitVideoTrackRef.current) {
           setAvatarStatus("connecting");
@@ -948,63 +1042,127 @@ function NotesPanel() {
 function FeedbackPanel({ feedback }: { feedback: CoachFeedback }) {
   if (!feedback) return null;
 
+  let hydrated = feedback;
+  if (!feedback.summary && feedback.raw) {
+    try {
+      hydrated = { ...feedback, ...JSON.parse(feedback.raw) };
+    } catch {
+      // ignore parse error
+    }
+  }
+
+  const score = hydrated?.score_overall;
+  const criteriaEntries = Object.entries(hydrated?.criteria ?? {});
+  const perQuestion = hydrated?.per_question ?? [];
+
   return (
-    <div className="bento-card p-4">
-      <h3 className="text-sm font-semibold text-slate-100">Feedback généré</h3>
-      <div className="mt-3 space-y-3 text-sm text-slate-200">
-        {feedback.summary ? (
+    <div className="bento-card space-y-5 p-5">
+      <div className="rounded-3xl border border-[#E3E6EC] bg-white/70 p-4 text-[#1F2432]">
+        <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">Résumé</p>
-            <p className="mt-1 text-sm text-slate-100">{feedback.summary}</p>
+            <p className="text-xs uppercase tracking-[0.4em] text-[#9CA3AF]">Overall score</p>
+            {typeof score === "number" ? (
+              <p className="text-3xl font-semibold">{Math.round(score)} / 100</p>
+            ) : (
+              <p className="text-sm text-[#6B7280]">En attente</p>
+            )}
           </div>
+        </div>
+        {hydrated?.summary ? (
+          <p className="mt-3 text-sm text-[#4A4E5E]">{hydrated.summary}</p>
         ) : null}
-        {feedback.strengths?.length ? (
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">Forces</p>
-            <ul className="mt-1 list-disc space-y-1 pl-4">
-              {feedback.strengths.map((item, index) => (
-                <li key={`strength-${index}`} className="text-sm text-slate-100">
-                  {item}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {hydrated?.strengths?.length ? (
+          <div className="rounded-2xl border border-[#DCE0ED] bg-white/80 p-4">
+            <p className="text-xs uppercase tracking-[0.35em] text-[#4F46E5]">Strengths</p>
+            <ul className="mt-3 space-y-2 text-sm text-[#1F2432]">
+              {hydrated.strengths.map((item, index) => (
+                <li key={`strength-${index}`} className="flex gap-2">
+                  <span className="text-[#4F46E5]">•</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
         ) : null}
-        {feedback.improvements?.length ? (
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">
-              Axes d'amélioration
-            </p>
-            <ul className="mt-1 list-disc space-y-1 pl-4">
-              {feedback.improvements.map((item, index) => (
-                <li key={`improvement-${index}`} className="text-sm text-slate-100">
-                  {item}
+
+        {hydrated?.improvements?.length ? (
+          <div className="rounded-2xl border border-[#FFE4E6] bg-[#FFF7F8] p-4">
+            <p className="text-xs uppercase tracking-[0.35em] text-[#DB2777]">To improve</p>
+            <ul className="mt-3 space-y-2 text-sm text-[#1F2432]">
+              {hydrated.improvements.map((item, index) => (
+                <li key={`improvement-${index}`} className="flex gap-2">
+                  <span className="text-[#DB2777]">•</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </div>
-        ) : null}
-        {feedback.recommendations?.length ? (
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">
-              Recommandations
-            </p>
-            <ul className="mt-1 list-disc space-y-1 pl-4">
-              {feedback.recommendations.map((item, index) => (
-                <li key={`recommendation-${index}`} className="text-sm text-slate-100">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-        {feedback.raw ? (
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/70">Sortie brute</p>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-slate-100">{feedback.raw}</p>
           </div>
         ) : null}
       </div>
+
+      {criteriaEntries.length ? (
+        <div className="rounded-2xl border border-[#E3E6EC] bg-white/80 p-4">
+          <p className="text-xs uppercase tracking-[0.35em] text-[#9CA3AF]">Criteria</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {criteriaEntries.map(([key, value]) => (
+              <div key={key} className="flex items-center justify-between rounded-2xl bg-[#F7F8FC] px-4 py-3">
+                <span className="text-sm font-medium text-[#4A4E5E]">
+                  {key.replace(/_/g, " ")}
+                </span>
+                <span className="text-base font-semibold text-[#1F2432]">
+                  {Math.round(value)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {perQuestion.length ? (
+        <div className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.35em] text-[#9CA3AF]">Question drill-down</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {perQuestion.map((item, index) => (
+              <div key={`${item.question ?? "q"}-${index}`} className="rounded-2xl border border-[#E3E6EC] bg-white/80 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[#1F2432]">
+                    {item.question ?? `Question ${index + 1}`}
+                  </p>
+                  {typeof item.score === "number" ? (
+                    <span className="text-xs font-semibold text-[#4F46E5]">
+                      {Math.round(item.score)} / 100
+                    </span>
+                  ) : null}
+                </div>
+                {item.summary || item.insight ? (
+                  <p className="mt-2 text-sm text-[#4A4E5E]">{item.summary ?? item.insight}</p>
+                ) : null}
+                {item.tips?.length ? (
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-[#4A4E5E]">
+                    {item.tips.map((tip, tipIdx) => (
+                      <li key={`tip-${index}-${tipIdx}`}>{tip}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {hydrated?.recommendations?.length ? (
+        <div className="rounded-2xl border border-[#E3E6EC] bg-white/80 p-4">
+          <p className="text-xs uppercase tracking-[0.35em] text-[#4F46E5]">Next steps</p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-[#1F2432]">
+            {hydrated.recommendations.map((item, index) => (
+              <li key={`recommendation-${index}`}>{item}</li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1039,7 +1197,8 @@ function AvatarOverlay({
   if (session.stub) {
     return (
       <p>
-        Configuration Beyond Presence/LiveKit absente. Ajoutez vos clés API et relancez le
+        Configuration Beyond Presence/LiveKit absente. Ajoutez la variable <code>BEY_API_KEY</code>{" "}
+        (ou <code>BEYOND_PRESENCE_API_KEY</code>) ainsi que <code>BEY_AVATAR_ID</code>, puis relancez le
         worker LiveKit pour activer l&apos;avatar.
       </p>
     );

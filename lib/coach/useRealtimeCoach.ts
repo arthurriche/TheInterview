@@ -6,6 +6,9 @@ import { toast } from "sonner";
 const REALTIME_SAMPLE_RATE = 24000;
 const MIN_COMMIT_DURATION_MS = 320;
 const MAX_COMMIT_INTERVAL_MS = 1200;
+const SPEECH_START_THRESHOLD = 0.0125;
+const SPEECH_STOP_THRESHOLD = 0.007;
+const SPEECH_RELEASE_MS = 350;
 
 const estimatePcm16DurationMs = (base64: string): number => {
   if (!base64) return 0;
@@ -41,6 +44,7 @@ export interface CoachSessionResult {
 interface UseRealtimeCoachOptions {
   sessionId?: string;
   autoStart?: boolean;
+  disableOpenAI?: boolean;  // If true, don't connect to OpenAI (use LiveKit Agent only)
   onSessionStart?: (sessionId: string) => void;
   onSessionEnd?: (result: CoachSessionResult) => void | Promise<void>;
 }
@@ -121,6 +125,16 @@ const decodePcm16Base64 = (base64: string): Float32Array => {
   return float32;
 };
 
+const computeRms = (data: Float32Array): number => {
+  if (!data || data.length === 0) return 0;
+  let sumSquares = 0;
+  for (let i = 0; i < data.length; i += 1) {
+    const sample = data[i];
+    sumSquares += sample * sample;
+  }
+  return Math.sqrt(sumSquares / data.length);
+};
+
 export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtimeCoachReturn {
   const [status, setStatus] = useState<UseRealtimeCoachReturn["status"]>("idle");
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -143,6 +157,10 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
   const audioBufferStateRef = useRef<{ bufferedMs: number; lastCommitTs: number }>({
     bufferedMs: 0,
     lastCommitTs: 0
+  });
+  const speechActivityRef = useRef<{ speaking: boolean; silenceMs: number }>({
+    speaking: false,
+    silenceMs: 0
   });
   const sessionIdRef = useRef<string | null>(null);
   const audioErrorNotifiedRef = useRef<boolean>(false);
@@ -199,6 +217,11 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
   const commitBufferedAudio = useCallback(
     async (session: string, reason: "threshold" | "flush") => {
       if (!session) return;
+      const state = audioBufferStateRef.current;
+      if (state.bufferedMs <= 0) {
+        state.lastCommitTs = Date.now();
+        return;
+      }
 
       const response = await fetch("/api/coach/fcl055d/commit", {
         method: "POST",
@@ -212,7 +235,6 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
 
         if (/conversation_already_has_active_response/i.test(message)) {
           console.warn(`Commit différé: réponse déjà en cours (${reason})`);
-          const state = audioBufferStateRef.current;
           state.bufferedMs = 0;
           state.lastCommitTs = Date.now();
           return;
@@ -229,7 +251,6 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
         throw new Error(message);
       }
 
-      const state = audioBufferStateRef.current;
       state.bufferedMs = 0;
       state.lastCommitTs = Date.now();
     },
@@ -275,7 +296,7 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
           const elapsed = now - state.lastCommitTs;
           const shouldCommit =
             state.bufferedMs >= MIN_COMMIT_DURATION_MS ||
-            elapsed >= MAX_COMMIT_INTERVAL_MS;
+            (state.bufferedMs > 0 && elapsed >= MAX_COMMIT_INTERVAL_MS);
 
           if (shouldCommit) {
             await commitBufferedAudio(id, "threshold");
@@ -357,12 +378,41 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
         gain.gain.value = 0;
         micGainRef.current = gain;
 
+        speechActivityRef.current = { speaking: false, silenceMs: 0 };
+
         processor.onaudioprocess = (event) => {
           if (sessionIdRef.current !== id) return;
           if (isMutedRef.current) return;
           const input = event.inputBuffer.getChannelData(0);
           if (!input || input.length === 0) return;
           const processed = resampleBuffer(input, ctx.sampleRate, REALTIME_SAMPLE_RATE);
+          const rms = computeRms(processed);
+          const chunkDuration =
+            processed.length > 0 ? (processed.length / REALTIME_SAMPLE_RATE) * 1000 : 0;
+          const speechState = speechActivityRef.current;
+          let shouldSend = false;
+
+          if (speechState.speaking) {
+            shouldSend = true;
+            if (rms < SPEECH_STOP_THRESHOLD) {
+              speechState.silenceMs += chunkDuration;
+              if (speechState.silenceMs >= SPEECH_RELEASE_MS) {
+                speechState.speaking = false;
+                speechState.silenceMs = 0;
+              }
+            } else {
+              speechState.silenceMs = 0;
+            }
+          } else if (rms >= SPEECH_START_THRESHOLD) {
+            speechState.speaking = true;
+            speechState.silenceMs = 0;
+            shouldSend = true;
+          }
+
+          if (!shouldSend) {
+            return;
+          }
+
           const base64 = float32ToBase64Pcm(processed);
           enqueueAudioChunk(id, base64);
         };
@@ -384,39 +434,9 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
   const playAssistantAudio = useCallback((base64: string) => {
     if (!base64) return;
 
-    try {
-      let ctx = playbackContextRef.current;
-      if (!ctx) {
-        try {
-          ctx = new AudioContext({ sampleRate: REALTIME_SAMPLE_RATE });
-        } catch (error) {
-          console.warn("AudioContext sample rate non supporté, utilisation par défaut", error);
-          ctx = new AudioContext();
-        }
-        playbackContextRef.current = ctx;
-        playbackTimeRef.current = ctx.currentTime;
-      }
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {
-          /* ignore resume errors */
-        });
-      }
-
-      const samples = decodePcm16Base64(base64);
-      const buffer = ctx.createBuffer(1, samples.length, REALTIME_SAMPLE_RATE);
-      buffer.getChannelData(0).set(samples);
-
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(ctx.destination);
-
-      const startAt = Math.max(playbackTimeRef.current, ctx.currentTime);
-      source.start(startAt);
-      playbackTimeRef.current = startAt + buffer.duration;
-    } catch (error) {
-      console.error("Lecture audio échouée", error);
-    }
+    // DISABLED: Audio is played by Beyond Presence avatar via LiveKit
+    // Playing locally would cause double audio
+    console.log("🔇 Skipping local audio playback - Beyond Presence avatar handles audio");
   }, []);
 
   const resetState = useCallback(() => {
@@ -429,6 +449,7 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
     sessionIdRef.current = null;
     audioUploadQueueRef.current = Promise.resolve();
     audioBufferStateRef.current = { bufferedMs: 0, lastCommitTs: 0 };
+    speechActivityRef.current = { speaking: false, silenceMs: 0 };
     audioErrorNotifiedRef.current = false;
     if (audioContextRef.current) {
       audioContextRef.current.close().catch(() => {
@@ -585,6 +606,24 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
       return { ok: false, error: "Une session est déjà en cours." };
     }
 
+    // If OpenAI is disabled, we're using LiveKit Agent only - skip backend API calls
+    if (options?.disableOpenAI) {
+      const newSessionId = options?.sessionId ?? crypto.randomUUID();
+      sessionIdRef.current = newSessionId;
+      setSessionId(newSessionId);
+      setStatus("running");
+      setStartTime(Date.now());
+      setEndTime(null);
+      options?.onSessionStart?.(newSessionId);
+      
+      console.log("🔇 OpenAI frontend disabled - using LiveKit Agent only for audio/transcript");
+      toast.success("Session prête (LiveKit Agent)", {
+        description: "L'avatar Beyond Presence gère la conversation."
+      });
+      
+      return { ok: true, sessionId: newSessionId };
+    }
+
     setStatus("connecting");
     setTranscript([]);
     setFeedback(null);
@@ -630,6 +669,7 @@ export function useRealtimeCoach(options?: UseRealtimeCoachOptions): UseRealtime
         bufferedMs: 0,
         lastCommitTs: Date.now()
       };
+      speechActivityRef.current = { speaking: false, silenceMs: 0 };
 
       const micStarted = await startMicrophoneCapture(newSessionId);
       if (!micStarted) {

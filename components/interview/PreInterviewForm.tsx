@@ -64,13 +64,13 @@ const ROLES = [
 ];
 
 const FOCUS_AREAS_OPTIONS = [
-  { value: 'valuation', label: 'Valorisation' },
-  { value: 'accounting', label: 'Comptabilité' },
-  { value: 'markets', label: 'Marchés financiers' },
-  { value: 'fit', label: 'Questions comportementales' },
-  { value: 'technical', label: 'Questions techniques' },
-  { value: 'case-study', label: 'Résolution de cas' },
-  { value: 'behavioral', label: 'Questions situationnelles' },
+  { value: "system-design", label: "Architecture & System Design" },
+  { value: "backend-scale", label: "Backend & Scalability" },
+  { value: "ml-ai", label: "ML / AI Engineering" },
+  { value: "data-engineering", label: "Data Engineering & Analytics" },
+  { value: "product-sense", label: "Product Sense & Strategy" },
+  { value: "security", label: "Security & Reliability" },
+  { value: "devxp", label: "Developer Experience & Tooling" }
 ];
 
 interface PreInterviewFormProps {

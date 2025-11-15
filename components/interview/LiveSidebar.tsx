@@ -81,12 +81,12 @@ export function LiveSidebar({ questions, currentQuestionIndex }: LiveSidebarProp
               onChange={(e) => setNote(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddNote()}
               placeholder="Ajouter une note..."
-              className="flex-1 rounded-(--radius) border border-white/15 bg-slate-950/40 px-3 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              className="flex-1 rounded-[var(--radius)] border border-white/15 bg-slate-950/40 px-3 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-200"
             />
             <button
               type="button"
               onClick={handleAddNote}
-              className="px-3 py-2 rounded-(--radius) bg-emerald-500/20 text-emerald-200 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
+              className="px-3 py-2 rounded-[var(--radius)] bg-emerald-500/20 text-emerald-200 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
             >
               +
             </button>
