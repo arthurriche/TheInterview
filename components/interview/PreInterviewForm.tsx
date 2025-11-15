@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Rocket, Briefcase, Target, FileText, Upload } from "lucide-react";
+import { Rocket, Briefcase, Target, FileText, Sparkles, Link2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -14,7 +14,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { FileDropzone } from "@/components/auth/FileDropzone";
 import { BentoCard } from "@/components/ui/bento-card";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { FocusArea, InterviewRound } from "@/lib/types/interview";
+import type { InterviewRound } from "@/lib/types/interview";
 
 const preInterviewSchema = z.object({
   title: z.string().min(3, "Le titre doit contenir au moins 3 caractères"),
@@ -82,13 +82,16 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [useExistingCV, setUseExistingCV] = useState(!!existingCvPath);
+  const [linkedInUrl, setLinkedInUrl] = useState("");
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractedSummary, setExtractedSummary] = useState<string | null>(null);
   const supabase = createSupabaseBrowserClient();
 
   const {
     register,
     control,
     handleSubmit,
-    watch,
+    setValue,
     formState: { errors },
   } = useForm<PreInterviewFormData>({
     resolver: zodResolver(preInterviewSchema),
@@ -100,6 +103,50 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
       focus_areas: [],
     },
   });
+
+  const handleLinkedInExtract = async () => {
+    if (!linkedInUrl.trim()) {
+      toast.error("Veuillez entrer une URL LinkedIn");
+      return;
+    }
+
+    setIsExtracting(true);
+    try {
+      const response = await fetch('/api/linkedin/extract', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: linkedInUrl }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Erreur lors de l'extraction");
+      }
+
+      if (result.success && result.data) {
+        // Auto-fill form fields
+        setValue('title', result.data.title);
+        setValue('company', result.data.company);
+        setValue('role', result.data.role);
+        setValue('position_round', result.data.position_round);
+        setValue('focus_areas', result.data.focus_areas);
+        setValue('duration_minutes', result.data.duration_minutes);
+
+        // Store summary
+        setExtractedSummary(result.data.summary);
+
+        toast.success("Informations extraites avec succès !");
+      }
+    } catch (error: any) {
+      console.error('Error extracting LinkedIn data:', error);
+      toast.error(error.message || "Erreur lors de l'extraction des données");
+    } finally {
+      setIsExtracting(false);
+    }
+  };
 
   const onSubmit = async (data: PreInterviewFormData) => {
     setIsSubmitting(true);
@@ -173,6 +220,64 @@ export function PreInterviewForm({ existingCvPath, userId }: PreInterviewFormPro
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* LinkedIn Auto-fill */}
+      <BentoCard padding="lg">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
+            <Link2 className="h-5 w-5 text-blue-300" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-slate-100">Auto-remplissage LinkedIn</h2>
+            <p className="text-sm text-slate-400 mt-1">Collez un lien d'offre LinkedIn pour remplir automatiquement les champs</p>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <Input
+              label="URL de l'offre LinkedIn"
+              placeholder="https://www.linkedin.com/jobs/view/..."
+              value={linkedInUrl}
+              onChange={(e) => {
+                setLinkedInUrl(e.target.value);
+                setExtractedSummary(null); // Clear summary when URL changes
+              }}
+              disabled={isExtracting}
+            />
+          </div>
+          <div className="pt-7">
+            <Button
+              type="button"
+              onClick={handleLinkedInExtract}
+              disabled={isExtracting || !linkedInUrl.trim()}
+              className="min-w-[150px]"
+            >
+              {isExtracting ? (
+                "Extraction..."
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Auto-remplir
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {/* Summary Box */}
+        {extractedSummary && (
+          <div className="mt-4 p-4 rounded-lg bg-blue-500/10 border border-blue-400/30">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="h-5 w-5 text-blue-300 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-blue-100 mb-1">Analyse de l'offre</h3>
+                <p className="text-sm text-blue-200/80 leading-relaxed">{extractedSummary}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </BentoCard>
+
       {/* Informations générales */}
       <BentoCard padding="lg">
         <div className="flex items-center gap-3 mb-6">
