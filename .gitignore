@@ -1,0 +1,46 @@
+### Dépendances
+node_modules/
+
+### Sorties de build / caches Next.js
+.next/
+out/
+dist/
+.turbo/
+.vercel/
+
+### Artefacts de test
+coverage/
+.vitest/
+
+### TypeScript
+*.tsbuildinfo
+
+### Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+### Secrets & environnements
+.env*
+!.env.example
+!.env.local.example
+
+### Supabase (état local du CLI)
+.supabase/
+
+### Fichiers OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### Divers caches
+.eslintcache
+.npm
+.parcel-cache
+tmp/
