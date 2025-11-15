@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     const openai = await getOpenAIClient();
-    const supabase = getSupabaseAdminClient();
+    const supabase = await getSupabaseAdminClient();
 
     // Récupérer les informations de la session pour le contexte
     const { data: sessionData } = await supabase

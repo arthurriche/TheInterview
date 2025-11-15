@@ -8,7 +8,7 @@ interface FeedbackPageProps {
 }
 
 export default async function FeedbackSessionPage({ params }: FeedbackPageProps) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = await getSupabaseAdminClient();
   let feedback: { md_text: string; summary?: string | null } | null = null;
 
   if (supabase) {

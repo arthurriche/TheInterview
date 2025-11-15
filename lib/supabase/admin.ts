@@ -4,7 +4,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let adminClient: SupabaseClient | null = null;
 
-export function getSupabaseAdminClient(): SupabaseClient | null {
+export async function getSupabaseAdminClient(): Promise<SupabaseClient | null> {
   if (adminClient) {
     return adminClient;
   }

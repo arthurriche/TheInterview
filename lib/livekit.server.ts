@@ -32,7 +32,7 @@ function getLiveKitEnv() {
   return { wsUrl, restUrl, apiKey, apiSecret };
 }
 
-export function isLiveKitConfigured(): boolean {
+export async function isLiveKitConfigured(): Promise<boolean> {
   const { wsUrl, apiKey, apiSecret } = getLiveKitEnv();
   return Boolean(wsUrl && apiKey && apiSecret);
 }
@@ -48,7 +48,9 @@ function deriveRestUrl(wsUrl?: string | null): string | undefined {
   return wsUrl;
 }
 
-export function createLiveKitViewerAccess(options: LiveKitViewerOptions): LiveKitViewerAccess | null {
+export async function createLiveKitViewerAccess(
+  options: LiveKitViewerOptions
+): Promise<LiveKitViewerAccess | null> {
   const { roomName, name, metadata, ttlSeconds } = options;
   const { wsUrl, apiKey, apiSecret } = getLiveKitEnv();
 
@@ -73,15 +75,14 @@ export function createLiveKitViewerAccess(options: LiveKitViewerOptions): LiveKi
 
   accessToken.addGrant(grant);
 
+  let expiresAt: string | undefined;
   if (ttlSeconds && Number.isFinite(ttlSeconds)) {
-    accessToken.ttl = Math.max(60, Math.min(ttlSeconds, 6 * 60 * 60)); // cap 6h
+    const safeTtlSeconds = Math.max(60, Math.min(ttlSeconds, 6 * 60 * 60)); // cap 6h
+    accessToken.ttl = `${safeTtlSeconds}s`;
+    expiresAt = new Date(Date.now() + safeTtlSeconds * 1000).toISOString();
   }
 
-  const token = accessToken.toJwt();
-  const expiresAt =
-    ttlSeconds && Number.isFinite(ttlSeconds)
-      ? new Date(Date.now() + ttlSeconds * 1000).toISOString()
-      : undefined;
+  const token = await accessToken.toJwt();
 
   return {
     url: wsUrl,

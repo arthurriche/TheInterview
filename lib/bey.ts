@@ -21,15 +21,16 @@ function resolveSessionId(candidate?: string): string {
   return randomUUID();
 }
 
-export function isBeyondPresenceReady(): boolean {
+export async function isBeyondPresenceReady(): Promise<boolean> {
   const hasApiKey = Boolean(process.env.BEYOND_PRESENCE_API_KEY);
-  return hasApiKey && isLiveKitConfigured();
+  const livekitReady = await isLiveKitConfigured();
+  return hasApiKey && livekitReady;
 }
 
 export async function createBeyondPresenceSession(
   payload: BeyondPresenceSessionRequest
 ): Promise<BeyondPresenceSessionResponse> {
-  const ready = isBeyondPresenceReady();
+  const ready = await isBeyondPresenceReady();
   const sessionId = resolveSessionId(payload.sessionId);
   const roomName = `${DEFAULT_ROOM_PREFIX}-${sessionId}`;
 
@@ -54,7 +55,7 @@ export async function createBeyondPresenceSession(
 
   const metadata = JSON.stringify(metadataPayload);
 
-  const livekit = createLiveKitViewerAccess({
+  const livekit = await createLiveKitViewerAccess({
     roomName,
     name: "FinanceBro Candidate",
     metadata,

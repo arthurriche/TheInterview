@@ -4,7 +4,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 
 export async function GET() {
-  const supabase = getSupabaseAdminClient();
+  const supabase = await getSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json({ data: [], note: "Supabase non configuré." }, { status: 200 });
   }
@@ -22,7 +22,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = await getSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json(
       { error: "Supabase non configuré. Impossible de créer la session." },
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = await getSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json({ error: "Supabase non configuré." }, { status: 500 });
   }

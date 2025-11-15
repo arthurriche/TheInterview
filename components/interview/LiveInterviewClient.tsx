@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import type { InterviewSession } from "@/lib/types/interview";
 import { useRealtimeCoach } from "@/lib/coach/useRealtimeCoach";
 import type { CoachSessionResult, TranscriptEntry } from "@/lib/coach/useRealtimeCoach";
+import type { BeyondPresenceSessionResponse } from "@/lib/bey/types";
 
 interface LiveInterviewClientProps {
   session: InterviewSession;
@@ -141,6 +142,17 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
     [questions, router, session.id, supabase, setIsEnding]
   );
 
+  const [beyondPresenceSession, setBeyondPresenceSession] =
+    useState<BeyondPresenceSessionResponse | null>(null);
+  const [avatarStatus, setAvatarStatus] = useState<
+    "idle" | "connecting" | "connected" | "stub" | "error"
+  >("idle");
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const avatarVideoRef = useRef<HTMLVideoElement>(null);
+  const livekitRoomRef = useRef<any>(null);
+  const livekitVideoTrackRef = useRef<any>(null);
+  const avatarTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const {
     status: coachStatus,
     transcript: coachTranscript,
@@ -156,6 +168,104 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
       await completeInterview("auto", result);
     }
   });
+
+  const teardownLiveKit = useCallback(() => {
+    try {
+      const currentTrack = livekitVideoTrackRef.current;
+      if (currentTrack && avatarVideoRef.current) {
+        currentTrack.detach(avatarVideoRef.current);
+      }
+    } catch (error) {
+      console.warn("Impossible de détacher la vidéo LiveKit", error);
+    } finally {
+      livekitVideoTrackRef.current = null;
+    }
+
+    const room = livekitRoomRef.current;
+    if (!room) {
+      return;
+    }
+
+    try {
+      room.removeAllListeners?.();
+      if (room.state === "connected") {
+        room.disconnect?.().catch(() => {
+          /* ignore */
+        });
+      }
+    } catch (error) {
+      console.warn("Impossible de fermer la room LiveKit", error);
+    } finally {
+      livekitRoomRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const createAvatarSession = async () => {
+      setAvatarError(null);
+      setAvatarStatus("connecting");
+
+      try {
+        const response = await fetch("/api/bey/session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            sessionId: session.id,
+            persona: session.role,
+            locale: "fr-FR"
+          })
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload?.error ?? "Impossible de créer la session Beyond Presence.");
+        }
+
+        const payload = (await response.json()) as BeyondPresenceSessionResponse;
+        if (cancelled) return;
+
+        setBeyondPresenceSession(payload);
+
+        if (payload.stub) {
+          setAvatarStatus("stub");
+          return;
+        }
+
+        if (payload.agentDispatched === false) {
+          setAvatarStatus("error");
+          setAvatarError(
+            `Agent Beyond Presence non démarré. Vérifiez le worker « ${payload.agentName ?? "finance-coach-avatar"} ».`
+          );
+          return;
+        }
+
+        setAvatarStatus("connecting");
+      } catch (error) {
+        if (cancelled) return;
+        const message =
+          error instanceof Error ? error.message : "Erreur inconnue lors du démarrage de l'avatar.";
+        setAvatarStatus("error");
+        setAvatarError(message);
+        toast.error("Impossible de lancer l'avatar Beyond Presence", {
+          description: message
+        });
+      }
+    };
+
+    void createAvatarSession();
+
+    return () => {
+      cancelled = true;
+      setBeyondPresenceSession(null);
+      setAvatarStatus("idle");
+      setAvatarError(null);
+      teardownLiveKit();
+    };
+  }, [session.id, session.role, teardownLiveKit]);
 
   const handleEndInterview = useCallback(async () => {
     if (isEnding || completionRef.current) {
@@ -188,6 +298,142 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
 
     return () => clearInterval(interval);
   }, [handleEndInterview]);
+
+  useEffect(() => {
+    if (!beyondPresenceSession) {
+      setAvatarStatus("idle");
+      setAvatarError(null);
+      teardownLiveKit();
+      return;
+    }
+
+    if (beyondPresenceSession.stub || !beyondPresenceSession.livekit) {
+      setAvatarStatus(beyondPresenceSession.stub ? "stub" : "idle");
+      return;
+    }
+
+    let cancelled = false;
+
+    const connect = async () => {
+      setAvatarStatus("connecting");
+
+      try {
+        const livekit = await import("livekit-client");
+        if (cancelled) return;
+
+        const room = new livekit.Room({
+          adaptiveStream: true,
+          dynacast: true
+        });
+
+        const detachVideo = () => {
+          const currentTrack = livekitVideoTrackRef.current;
+          if (currentTrack && avatarVideoRef.current) {
+            currentTrack.detach(avatarVideoRef.current);
+          }
+          livekitVideoTrackRef.current = null;
+        };
+
+        const attachVideo = (track: any) => {
+          if (!avatarVideoRef.current || track.kind !== livekit.Track.Kind.Video) {
+            return;
+          }
+          try {
+            detachVideo();
+            track.attach(avatarVideoRef.current);
+            livekitVideoTrackRef.current = track;
+          } catch (error) {
+            console.warn("Impossible d'attacher la vidéo Beyond Presence", error);
+          }
+        };
+
+        room
+          .on(livekit.RoomEvent.TrackSubscribed, (track: any) => {
+            attachVideo(track);
+            if (track.kind === livekit.Track.Kind.Video) {
+              setAvatarStatus("connected");
+            }
+          })
+          .on(livekit.RoomEvent.TrackUnsubscribed, (track: any) => {
+            if (track === livekitVideoTrackRef.current) {
+              detachVideo();
+              setAvatarStatus("connecting");
+            }
+          })
+          .on(livekit.RoomEvent.Disconnected, () => {
+            detachVideo();
+            setAvatarStatus("idle");
+          });
+
+        await room.connect(beyondPresenceSession.livekit.url, beyondPresenceSession.livekit.token);
+
+        if (cancelled) {
+          await room.disconnect().catch(() => {
+            /* ignore */
+          });
+          return;
+        }
+
+        livekitRoomRef.current = room;
+
+        room.remoteParticipants.forEach((participant: any) => {
+          participant.trackPublications.forEach((publication: any) => {
+            if (publication?.isSubscribed) {
+              const track = publication.track;
+              if (track) {
+                attachVideo(track);
+              }
+            }
+          });
+        });
+
+        if (!livekitVideoTrackRef.current) {
+          setAvatarStatus("connecting");
+        }
+      } catch (error) {
+        if (cancelled) return;
+        console.error("LiveKit avatar connection error", error);
+        setAvatarStatus("error");
+        setAvatarError(
+          error instanceof Error ? error.message : "Connexion LiveKit impossible pour l'avatar."
+        );
+        teardownLiveKit();
+      }
+    };
+
+    void connect();
+
+    return () => {
+      cancelled = true;
+      teardownLiveKit();
+    };
+  }, [beyondPresenceSession, teardownLiveKit]);
+
+  useEffect(() => {
+    if (avatarStatus === "connecting") {
+      if (avatarTimeoutRef.current) {
+        clearTimeout(avatarTimeoutRef.current);
+      }
+      avatarTimeoutRef.current = setTimeout(() => {
+        if (avatarStatus === "connecting") {
+          setAvatarStatus("error");
+          setAvatarError(
+            "Flux avatar indisponible. Vérifiez la configuration Beyond Presence / LiveKit."
+          );
+        }
+      }, 15000);
+    } else if (avatarTimeoutRef.current) {
+      clearTimeout(avatarTimeoutRef.current);
+      avatarTimeoutRef.current = null;
+    }
+
+    return () => {
+      if (avatarTimeoutRef.current) {
+        clearTimeout(avatarTimeoutRef.current);
+        avatarTimeoutRef.current = null;
+      }
+    };
+  }, [avatarStatus]);
 
   // Simuler la progression des questions
   useEffect(() => {
@@ -272,7 +518,15 @@ export function LiveInterviewClient({ session, userName }: LiveInterviewClientPr
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* Video player */}
         <div className="space-y-4">
-          <InterviewPlayer userName={userName} isMuted={isMuted} isVideoOff={isVideoOff} />
+          <InterviewPlayer
+            userName={userName}
+            isMuted={isMuted}
+            isVideoOff={isVideoOff}
+            avatarVideoRef={avatarVideoRef}
+            avatarStatus={avatarStatus}
+            avatarError={avatarError}
+            beyondPresenceSession={beyondPresenceSession}
+          />
           
           {/* Controls */}
           <div className="flex justify-center">

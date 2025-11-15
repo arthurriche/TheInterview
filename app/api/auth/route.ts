@@ -11,7 +11,7 @@ interface AuthRequest {
 }
 
 export async function POST(request: Request) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = await getSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json(
       { error: "Supabase admin non configuré. Impossible de créer un compte." },
