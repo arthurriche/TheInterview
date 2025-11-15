@@ -151,35 +151,71 @@ export function RealtimeSession() {
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraStatus("error");
       setCameraError("Caméra non supportée sur ce navigateur.");
+      if (!micPreviewStreamRef.current) {
+        setMicStatus("error");
+        setMicError("Micro non supporté sur ce navigateur.");
+      }
       return false;
     }
 
     if (typeof window !== "undefined" && !window.isSecureContext) {
-      const description =
-        "La caméra nécessite un contexte sécurisé (HTTPS ou http://localhost).";
+      const description = "La caméra nécessite un contexte sécurisé (HTTPS ou http://localhost).";
       setCameraStatus("error");
       setCameraError(description);
+      if (!micPreviewStreamRef.current) {
+        setMicStatus("error");
+        setMicError(description);
+      }
       toast.error("Impossible d'activer la caméra.", { description });
       return false;
     }
 
     try {
       setCameraStatus("requesting");
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-      cameraStreamRef.current = stream;
-      syncCameraElement(stream);
+      if (!micPreviewStreamRef.current) {
+        setMicStatus("requesting");
+        setMicError(null);
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: true
+      });
+
+      const videoTracks = stream.getVideoTracks();
+      if (!videoTracks.length) {
+        throw new Error("Aucune caméra détectée.");
+      }
+
+      const videoStream = new MediaStream(videoTracks);
+      cameraStreamRef.current = videoStream;
+      syncCameraElement(videoStream);
       setCameraStatus("ready");
       setCameraError(null);
+
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length) {
+        stopMicPreview();
+        const audioStream = new MediaStream(audioTracks);
+        micPreviewStreamRef.current = audioStream;
+        setMicStatus("ready");
+        setMicError(null);
+      }
+
       return true;
     } catch (error) {
       console.error("Camera access error", error);
       const description = error instanceof Error ? error.message : undefined;
       setCameraStatus("error");
       setCameraError(description ?? "Accès caméra refusé.");
+      if (!micPreviewStreamRef.current) {
+        setMicStatus("error");
+        setMicError(description ?? "Accès micro refusé.");
+      }
       toast.error("Impossible d'activer la caméra.", { description });
       return false;
     }
-  }, [cameraStatus, syncCameraElement]);
+  }, [cameraStatus, stopMicPreview, syncCameraElement]);
 
   const ensureMicrophoneAccess = useCallback(async (): Promise<boolean> => {
     if (micPreviewStreamRef.current && micStatus === "ready") {
@@ -321,16 +357,27 @@ export function RealtimeSession() {
       setAvatarError(null);
       setAvatarStatus("idle");
 
-      const [cameraReady, micReady] = await Promise.all([
-        ensureCameraAccess(),
-        ensureMicrophoneAccess()
-      ]);
-      if (!cameraReady || !micReady) {
-        toast.warning("Prévisualisation incomplète", {
-          description: "Autorisez la caméra et le micro pour vérifier les flux."
+      const cameraReady = await ensureCameraAccess();
+      if (!cameraReady) {
+        toast.warning("Caméra requise", {
+          description: "Autorisez la caméra pour démarrer la prévisualisation."
         });
         setPreviewStatus("error");
         return false;
+      }
+
+      if (!micPreviewStreamRef.current) {
+        const micReady = await ensureMicrophoneAccess();
+        if (!micReady) {
+          toast.warning("Prévisualisation incomplète", {
+            description: "Autorisez le micro pour vérifier les flux."
+          });
+          setPreviewStatus("error");
+          return false;
+        }
+      } else {
+        setMicStatus("ready");
+        setMicError(null);
       }
 
       const nextSessionId =
